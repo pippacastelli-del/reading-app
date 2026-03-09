@@ -89,10 +89,10 @@ export default function ReadingApp() {
       <div className="p-6 grid gap-4">
         <h1 className="text-3xl font-bold">ReadBoost</h1>
 
-        <Button onClick={() => setScreen("levels")}>Start Reading</button>
-        <Button onClick={() => setScreen("progress")}>Parent Progress</button>
-        <Button onClick={() => setScreen("rewards")}>Rewards</button>
-        <Button onClick={() => setScreen("games")}>Reading Game</button>
+        <button onClick={() => setScreen("levels")}>Start Reading</button>
+        <button onClick={() => setScreen("progress")}>Parent Progress</button>
+        <button onClick={() => setScreen("rewards")}>Rewards</button>
+        <button onClick={() => setScreen("games")}>Reading Game</button>
       </div>
     );
   }
@@ -103,7 +103,7 @@ export default function ReadingApp() {
         <h2 className="text-xl font-bold">Choose Level</h2>
 
         {[1, 2, 3, 4].map(l => (
-          <Button
+          <button
             key={l}
             onClick={() => {
               setLevel(l);
@@ -115,7 +115,7 @@ export default function ReadingApp() {
           </button>
         ))}
 
-        <Button variant="outline" onClick={() => setScreen("home")}>Home</button>
+        <button variant="outline" onClick={() => setScreen("home")}>Home</button>
       </div>
     );
   }
@@ -130,9 +130,9 @@ export default function ReadingApp() {
         </Card>
 
         <div className="flex gap-3">
-          <Button onClick={startRecording}>Record</button>
-          <Button onClick={stopRecording}>Stop</button>
-          <Button onClick={nextStory}>Next Story</button>
+          <button onClick={startRecording}>Record</button>
+          <button onClick={stopRecording}>Stop</button>
+          <button onClick={nextStory}>Next Story</button>
         </div>
 
         {feedback && (
@@ -144,7 +144,7 @@ export default function ReadingApp() {
           </Card>
         )}
 
-        <Button variant="outline" onClick={() => setScreen("home")}>Home</button>
+        <button variant="outline" onClick={() => setScreen("home")}>Home</button>
       </div>
     );
   }
@@ -158,7 +158,7 @@ export default function ReadingApp() {
         <p>Minutes read: {minutesRead}</p>
         <p>Reading streak: {streak} days 🔥</p>
 
-        <Button onClick={() => setScreen("home")}>Home</Button>
+        <button onClick={() => setScreen("home")}>Home</Button>
       </div>
     );
   }
@@ -176,7 +176,7 @@ export default function ReadingApp() {
           </Card>
         ))}
 
-        <Button onClick={() => setScreen("home")}>Home</button>
+        <button onClick={() => setScreen("home")}>Home</button>
       </div>
     );
   }
@@ -192,7 +192,7 @@ export default function ReadingApp() {
 
         <p>Type the word you hear:</p>
 
-        <Button onClick={() => {
+        <button onClick={() => {
           const utter = new SpeechSynthesisUtterance(word);
           speechSynthesis.speak(utter);
         }}>Play Word</Button>
@@ -205,11 +205,12 @@ export default function ReadingApp() {
 
         {guess === word && <p>✅ Correct!</p>}
 
-        <Button onClick={() => setScreen("home")}>Home</button>
+        <button onClick={() => setScreen("home")}>Home</button>
       </div>
     );
   }
 }
+
 
 
 
