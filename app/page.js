@@ -195,7 +195,7 @@ export default function ReadingApp() {
         <button onClick={() => {
           const utter = new SpeechSynthesisUtterance(word);
           speechSynthesis.speak(utter);
-        }}>Play Word</Button>
+        }}>Play Word</button>
 
         <input
           className="border p-2"
@@ -210,6 +210,7 @@ export default function ReadingApp() {
     );
   }
 }
+
 
 
 
