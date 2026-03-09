@@ -3,10 +3,6 @@
 import React, { useState, useRef } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import React, { useState, useRef } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-
 // Expanded story library (MVP sample)
 const passages = {
   1: [
@@ -216,4 +212,5 @@ export default function ReadingApp() {
     );
   }
 }
+
 
