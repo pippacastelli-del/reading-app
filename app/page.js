@@ -158,7 +158,7 @@ export default function ReadingApp() {
         <p>Minutes read: {minutesRead}</p>
         <p>Reading streak: {streak} days 🔥</p>
 
-        <button onClick={() => setScreen("home")}>Home</Button>
+        <button onClick={() => setScreen("home")}>Home</button>
       </div>
     );
   }
@@ -210,6 +210,7 @@ export default function ReadingApp() {
     );
   }
 }
+
 
 
 
