@@ -2,37 +2,59 @@
 import { useState } from "react";
 
 export default function Page() {
+
   const [screen, setScreen] = useState("home");
   const [level, setLevel] = useState(null);
+  const [answer, setAnswer] = useState("");
+  const [message, setMessage] = useState("");
+  const [stars, setStars] = useState(0);
 
   const levels = {
-    1: "The cat sat on the mat.",
-    2: "The dog ran to the big tree.",
-    3: "Sam and Tom went to the park.",
-    4: "The red bird flew over the hill."
+    1: { sentence: "The cat sat on the mat.", word: "cat" },
+    2: { sentence: "The dog ran to the tree.", word: "dog" },
+    3: { sentence: "Sam and Tom went to the park.", word: "park" },
+    4: { sentence: "The red bird flew over the hill.", word: "bird" }
   };
+
+  function checkAnswer() {
+    if (answer.toLowerCase() === levels[level].word) {
+      setMessage("⭐ Correct!");
+      setStars(stars + 1);
+    } else {
+      setMessage("❌ Try again");
+    }
+  }
 
   if (screen === "home") {
     return (
-      <div style={{padding:20}}>
-        <h1>ReadBoost</h1>
+      <div style={{padding:30}}>
+        <h1>📚 ReadBoost</h1>
 
         <button onClick={() => setScreen("levels")}>Start Reading</button>
-        <button onClick={() => setScreen("progress")}>Parent Progress</button>
+        <br/><br/>
+
         <button onClick={() => setScreen("rewards")}>Rewards</button>
-        <button onClick={() => setScreen("game")}>Reading Game</button>
+        <br/><br/>
+
+        <button onClick={() => setScreen("progress")}>Parent Progress</button>
       </div>
     );
   }
 
   if (screen === "levels") {
     return (
-      <div style={{padding:20}}>
+      <div style={{padding:30}}>
         <h2>Select Level</h2>
 
         <button onClick={() => {setLevel(1); setScreen("reading");}}>Level 1</button>
+        <br/><br/>
+
         <button onClick={() => {setLevel(2); setScreen("reading");}}>Level 2</button>
+        <br/><br/>
+
         <button onClick={() => {setLevel(3); setScreen("reading");}}>Level 3</button>
+        <br/><br/>
+
         <button onClick={() => {setLevel(4); setScreen("reading");}}>Level 4</button>
 
         <br/><br/>
@@ -42,58 +64,80 @@ export default function Page() {
   }
 
   if (screen === "reading") {
+    const data = levels[level];
+
     return (
-      <div style={{padding:20}}>
+      <div style={{padding:30}}>
         <h2>Level {level}</h2>
 
         <p style={{fontSize:28}}>
-          {levels[level]}
+          {data.sentence}
         </p>
 
         <button onClick={() => {
-          const utter = new SpeechSynthesisUtterance(levels[level]);
+          const utter = new SpeechSynthesisUtterance(data.word);
           speechSynthesis.speak(utter);
         }}>
-          🔊 Read Aloud
+          🔊 Play Word
         </button>
 
         <br/><br/>
-        <button onClick={() => setScreen("levels")}>Back</button>
-      </div>
-    );
-  }
 
-  if (screen === "progress") {
-    return (
-      <div style={{padding:20}}>
-        <h2>Parent Progress</h2>
-        <p>Reading streak: 3 days 🔥</p>
-        <p>Minutes read: 25</p>
-        <button onClick={() => setScreen("home")}>Home</button>
+        <input
+          value={answer}
+          onChange={(e) => setAnswer(e.target.value)}
+          placeholder="Type the word you hear"
+          style={{fontSize:20, padding:5}}
+        />
+
+        <br/><br/>
+
+        <button onClick={checkAnswer}>
+          Check Answer
+        </button>
+
+        <p style={{fontSize:20}}>
+          {message}
+        </p>
+
+        <br/>
+        <button onClick={() => setScreen("levels")}>Back</button>
       </div>
     );
   }
 
   if (screen === "rewards") {
     return (
-      <div style={{padding:20}}>
-        <h2>Rewards</h2>
-        <p>⭐ Stars earned: 5</p>
-        <button onClick={() => setScreen("home")}>Home</button>
+      <div style={{padding:30}}>
+        <h2>⭐ Rewards</h2>
+
+        <p style={{fontSize:24}}>
+          Stars earned: {stars}
+        </p>
+
+        <button onClick={() => setScreen("home")}>
+          Home
+        </button>
       </div>
     );
   }
 
-  if (screen === "game") {
+  if (screen === "progress") {
     return (
-      <div style={{padding:20}}>
-        <h2>Reading Game</h2>
-        <p>Guess the word coming soon!</p>
-        <button onClick={() => setScreen("home")}>Home</button>
+      <div style={{padding:30}}>
+        <h2>📊 Parent Progress</h2>
+
+        <p>Stars earned: {stars}</p>
+
+        <button onClick={() => setScreen("home")}>
+          Home
+        </button>
       </div>
     );
   }
+
 }
+
 
 
 
