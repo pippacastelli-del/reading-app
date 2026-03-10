@@ -80,7 +80,12 @@ export default function Page() {
         }}>
           🔊 Play Word
         </button>
-
+<button onClick={() => {
+  const utter = new SpeechSynthesisUtterance(data.sentence);
+  speechSynthesis.speak(utter);
+}}>
+  🔊 Read Full Sentence
+</button>
         <br/><br/>
 
         <input
@@ -137,6 +142,7 @@ export default function Page() {
   }
 
 }
+
 
 
 
