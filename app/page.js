@@ -85,6 +85,7 @@ speechSynthesis.speak(utter);
 </button>
 <button onClick={() => {
   const utter = new SpeechSynthesisUtterance(data.sentence);
+  utter.rate = 0.7;
   speechSynthesis.speak(utter);
 }}>
   🔊 Read Full Sentence
@@ -145,6 +146,7 @@ speechSynthesis.speak(utter);
   }
 
 }
+
 
 
 
