@@ -89,21 +89,15 @@ speechSynthesis.speak(utter);
   speechSynthesis.speak(utter);
 }}>
   🔊 Read Full Sentence
+<button onClick={() => {
+  if (userInput.toLowerCase() === randomWord.toLowerCase()) {
+    alert("✅ Correct!");
+  } else {
+    alert("❌ Try again");
+  }
+}}>
+Check Answer
 </button>
-        <br/><br/>
-
-        <input
-          value={answer}
-          onChange={(e) => setAnswer(e.target.value)}
-          placeholder="Type the word you hear"
-          style={{fontSize:20, padding:5}}
-        />
-
-        <br/><br/>
-
-        <button onClick={checkAnswer}>
-          Check Answer
-        </button>
 
         <p style={{fontSize:20}}>
           {message}
@@ -146,6 +140,7 @@ speechSynthesis.speak(utter);
   }
 
 }
+
 
 
 
