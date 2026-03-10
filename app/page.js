@@ -81,14 +81,17 @@ export default function Page() {
 utter.rate = 0.7;
 speechSynthesis.speak(utter);
 }}>
-  🔊 Play Word
+🔊 Play Word
 </button>
+
 <button onClick={() => {
   const utter = new SpeechSynthesisUtterance(data.sentence);
   utter.rate = 0.7;
   speechSynthesis.speak(utter);
 }}>
   🔊 Read Full Sentence
+</button>
+
 <button onClick={() => {
   if (userInput.toLowerCase() === randomWord.toLowerCase()) {
     alert("✅ Correct!");
@@ -96,7 +99,7 @@ speechSynthesis.speak(utter);
     alert("❌ Try again");
   }
 }}>
-Check Answer
+  Check Answer
 </button>
 
         <p style={{fontSize:20}}>
@@ -140,6 +143,7 @@ Check Answer
   }
 
 }
+
 
 
 
