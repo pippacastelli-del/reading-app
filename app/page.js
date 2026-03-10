@@ -77,8 +77,9 @@ export default function Page() {
         <button onClick={() => {
   const words = data.sentence.replace(".", "").split(" ");
   const randomWord = words[Math.floor(Math.random() * words.length)];
-  const utter = new SpeechSynthesisUtterance(randomWord);
-  speechSynthesis.speak(utter);
+ const utter = new SpeechSynthesisUtterance(randomWord);
+utter.rate = 0.7;
+speechSynthesis.speak(utter);
 }}>
   🔊 Play Word
 </button>
@@ -144,6 +145,7 @@ export default function Page() {
   }
 
 }
+
 
 
 
