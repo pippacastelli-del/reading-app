@@ -75,11 +75,13 @@ export default function Page() {
         </p>
 
         <button onClick={() => {
-          const utter = new SpeechSynthesisUtterance(data.word);
-          speechSynthesis.speak(utter);
-        }}>
-          🔊 Play Word
-        </button>
+  const words = data.sentence.replace(".", "").split(" ");
+  const randomWord = words[Math.floor(Math.random() * words.length)];
+  const utter = new SpeechSynthesisUtterance(randomWord);
+  speechSynthesis.speak(utter);
+}}>
+  🔊 Play Word
+</button>
 <button onClick={() => {
   const utter = new SpeechSynthesisUtterance(data.sentence);
   speechSynthesis.speak(utter);
@@ -142,6 +144,7 @@ export default function Page() {
   }
 
 }
+
 
 
 
