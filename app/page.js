@@ -17,7 +17,7 @@ const greenButton = {
 ...buttonStyle,
 backgroundColor: "#4CAF50"
 };
-
+<h1 style={{fontSize:60, color:"red"}}>📚 ReadBoost NEW</h1>
 const blueButton = {
 ...buttonStyle,
 backgroundColor: "#2196F3"
@@ -329,6 +329,7 @@ return (
 }
 
 }
+
 
 
 
