@@ -21,9 +21,7 @@ const purpleButton = { ...buttonStyle, backgroundColor: "#9C27B0" };
 /* ---------- SPEECH FUNCTION ---------- */
 
 function speak(text) {
-
 const utter = new SpeechSynthesisUtterance(text);
-
 const voices = speechSynthesis.getVoices();
 
 const voice = voices.find(
@@ -37,7 +35,6 @@ utter.pitch = 1.1;
 
 speechSynthesis.cancel();
 speechSynthesis.speak(utter);
-
 }
 
 export default function Page() {
@@ -57,15 +54,11 @@ const levels = {
 4: { sentence: "The red bird flew over the hill." }
 };
 
-/* ---------- CHECK ANSWER ---------- */
-
 function checkAnswer(words) {
-
-```
 const correctWord = words[wordIndex].toLowerCase();
 
+```
 if (answer.toLowerCase() === correctWord) {
-
   setMessage("⭐ Correct!");
   setStars(stars + 1);
   setAnswer("");
@@ -83,13 +76,10 @@ if (answer.toLowerCase() === correctWord) {
 
 }
 
-/* ---------- READ SENTENCE ---------- */
-
 function readSentence(words) {
-
-```
 let i = 0;
 
+```
 const interval = setInterval(() => {
 
   if (i >= words.length) {
@@ -316,6 +306,8 @@ return (
 return null;
 
 }
+
+
 
 
 
