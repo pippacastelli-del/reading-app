@@ -19,7 +19,7 @@ export default function Page() {
 
   function checkAnswer(words) {
 
-    const correctWord = words[wordIndex].toLowerCase().replace(".", "");
+    const correctWord = words[wordIndex].toLowerCase();
 
     if (answer.toLowerCase() === correctWord) {
 
@@ -36,6 +36,7 @@ export default function Page() {
     } else {
       setMessage("❌ Try again");
     }
+
   }
 
   if (screen === "home") {
@@ -43,13 +44,21 @@ export default function Page() {
       <div style={{padding:30}}>
         <h1>📚 ReadBoost</h1>
 
-        <button onClick={() => setScreen("levels")}>Start Reading</button>
+        <button onClick={() => setScreen("levels")}>
+          Start Reading
+        </button>
+
         <br/><br/>
 
-        <button onClick={() => setScreen("rewards")}>Rewards</button>
+        <button onClick={() => setScreen("rewards")}>
+          Rewards
+        </button>
+
         <br/><br/>
 
-        <button onClick={() => setScreen("progress")}>Parent Progress</button>
+        <button onClick={() => setScreen("progress")}>
+          Parent Progress
+        </button>
       </div>
     );
   }
@@ -59,19 +68,33 @@ export default function Page() {
       <div style={{padding:30}}>
         <h2>Select Level</h2>
 
-        <button onClick={() => {setLevel(1); setWordIndex(0); setScreen("reading");}}>Level 1</button>
-        <br/><br/>
-
-        <button onClick={() => {setLevel(2); setWordIndex(0); setScreen("reading");}}>Level 2</button>
-        <br/><br/>
-
-        <button onClick={() => {setLevel(3); setWordIndex(0); setScreen("reading");}}>Level 3</button>
-        <br/><br/>
-
-        <button onClick={() => {setLevel(4); setWordIndex(0); setScreen("reading");}}>Level 4</button>
+        <button onClick={() => {setLevel(1); setWordIndex(0); setScreen("reading");}}>
+          Level 1
+        </button>
 
         <br/><br/>
-        <button onClick={() => setScreen("home")}>Home</button>
+
+        <button onClick={() => {setLevel(2); setWordIndex(0); setScreen("reading");}}>
+          Level 2
+        </button>
+
+        <br/><br/>
+
+        <button onClick={() => {setLevel(3); setWordIndex(0); setScreen("reading");}}>
+          Level 3
+        </button>
+
+        <br/><br/>
+
+        <button onClick={() => {setLevel(4); setWordIndex(0); setScreen("reading");}}>
+          Level 4
+        </button>
+
+        <br/><br/>
+
+        <button onClick={() => setScreen("home")}>
+          Home
+        </button>
       </div>
     );
   }
@@ -133,7 +156,11 @@ export default function Page() {
         </p>
 
         <br/>
-        <button onClick={() => setScreen("levels")}>Back</button>
+
+        <button onClick={() => setScreen("levels")}>
+          Back
+        </button>
+
       </div>
     );
   }
@@ -169,6 +196,7 @@ export default function Page() {
   }
 
 }
+
 
 
 
