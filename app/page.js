@@ -23,13 +23,6 @@ const purpleButton = { ...buttonStyle, backgroundColor: "#9C27B0" };
 function speak(text) {
 const utter = new SpeechSynthesisUtterance(text);
 
-const voices = speechSynthesis.getVoices();
-const voice = voices.find(
-v => v.lang === "en-US" || v.name.includes("Google")
-);
-
-if (voice) utter.voice = voice;
-
 utter.rate = 0.75;
 utter.pitch = 1.1;
 
@@ -47,7 +40,6 @@ const [answer, setAnswer] = useState("");
 const [message, setMessage] = useState("");
 const [stars, setStars] = useState(0);
 const [wordIndex, setWordIndex] = useState(0);
-const [highlightIndex, setHighlightIndex] = useState(-1);
 
 const levels = {
 1: { sentence: "The cat sat on the mat." },
@@ -82,31 +74,6 @@ if (answer.toLowerCase() === correctWord) {
 
 }
 
-/* ---------- READ SENTENCE ---------- */
-
-function readSentence(words) {
-
-```
-let i = 0;
-
-const interval = setInterval(() => {
-
-  if (i >= words.length) {
-    clearInterval(interval);
-    setHighlightIndex(-1);
-    return;
-  }
-
-  setHighlightIndex(i);
-  speak(words[i]);
-
-  i++;
-
-}, 900);
-```
-
-}
-
 /* ---------- HOME ---------- */
 
 if (screen === "home") {
@@ -130,15 +97,6 @@ return (
       onClick={() => setScreen("rewards")}
     >
       Rewards
-    </button>
-
-    <br/>
-
-    <button
-      style={purpleButton}
-      onClick={() => setScreen("progress")}
-    >
-      Parent Progress
     </button>
 
   </div>
@@ -238,37 +196,14 @@ return (
     <p
       style={{
         fontSize:48,
-        fontWeight:"bold",
-        lineHeight:1.6
+        fontWeight:"bold"
       }}
     >
-
-      {words.map((word, index) => (
-        <span
-          key={index}
-          style={{
-            backgroundColor:
-              index === highlightIndex ? "yellow" : "transparent",
-            marginRight:8
-          }}
-        >
-          {word}
-        </span>
-      ))}
-
+      {data.sentence}
     </p>
 
     <button
       style={blueButton}
-      onClick={() => readSentence(words)}
-    >
-      🔊 Read Sentence
-    </button>
-
-    <br/>
-
-    <button
-      style={greenButton}
       onClick={() => speak(currentWord)}
     >
       🔊 Play Word
@@ -306,15 +241,6 @@ return (
       Word {wordIndex + 1} of {words.length}
     </p>
 
-    <br/>
-
-    <button
-      style={purpleButton}
-      onClick={() => setScreen("levels")}
-    >
-      Back
-    </button>
-
   </div>
 );
 ```
@@ -330,33 +256,7 @@ return (
 ```
     <h2 style={{fontSize:36}}>⭐ Rewards</h2>
 
-    <p style={{fontSize:32}}>
-      Stars earned: {stars}
-    </p>
-
-    <button
-      style={purpleButton}
-      onClick={() => setScreen("home")}
-    >
-      Home
-    </button>
-
-  </div>
-);
-```
-
-}
-
-/* ---------- PROGRESS ---------- */
-
-if (screen === "progress") {
-return (
-<div style={{padding:30, textAlign:"center"}}>
-
-```
-    <h2 style={{fontSize:36}}>📊 Parent Progress</h2>
-
-    <p style={{fontSize:24}}>
+    <p style={{fontSize:28}}>
       Stars earned: {stars}
     </p>
 
@@ -376,6 +276,8 @@ return (
 return null;
 
 }
+
+
 
 
 
