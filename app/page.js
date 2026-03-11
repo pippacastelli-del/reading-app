@@ -8,18 +8,31 @@ export default function Page() {
   const [answer, setAnswer] = useState("");
   const [message, setMessage] = useState("");
   const [stars, setStars] = useState(0);
+  const [wordIndex, setWordIndex] = useState(0);
 
   const levels = {
-    1: { sentence: "The cat sat on the mat.", word: "cat" },
-    2: { sentence: "The dog ran to the tree.", word: "dog" },
-    3: { sentence: "Sam and Tom went to the park.", word: "park" },
-    4: { sentence: "The red bird flew over the hill.", word: "bird" }
+    1: { sentence: "The cat sat on the mat." },
+    2: { sentence: "The dog ran to the tree." },
+    3: { sentence: "Sam and Tom went to the park." },
+    4: { sentence: "The red bird flew over the hill." }
   };
 
-  function checkAnswer() {
-    if (answer.toLowerCase() === levels[level].word) {
+  function checkAnswer(words) {
+
+    const correctWord = words[wordIndex].toLowerCase().replace(".", "");
+
+    if (answer.toLowerCase() === correctWord) {
+
       setMessage("⭐ Correct!");
       setStars(stars + 1);
+      setAnswer("");
+
+      if (wordIndex < words.length - 1) {
+        setWordIndex(wordIndex + 1);
+      } else {
+        setMessage("🎉 Sentence Complete!");
+      }
+
     } else {
       setMessage("❌ Try again");
     }
@@ -46,16 +59,16 @@ export default function Page() {
       <div style={{padding:30}}>
         <h2>Select Level</h2>
 
-        <button onClick={() => {setLevel(1); setScreen("reading");}}>Level 1</button>
+        <button onClick={() => {setLevel(1); setWordIndex(0); setScreen("reading");}}>Level 1</button>
         <br/><br/>
 
-        <button onClick={() => {setLevel(2); setScreen("reading");}}>Level 2</button>
+        <button onClick={() => {setLevel(2); setWordIndex(0); setScreen("reading");}}>Level 2</button>
         <br/><br/>
 
-        <button onClick={() => {setLevel(3); setScreen("reading");}}>Level 3</button>
+        <button onClick={() => {setLevel(3); setWordIndex(0); setScreen("reading");}}>Level 3</button>
         <br/><br/>
 
-        <button onClick={() => {setLevel(4); setScreen("reading");}}>Level 4</button>
+        <button onClick={() => {setLevel(4); setWordIndex(0); setScreen("reading");}}>Level 4</button>
 
         <br/><br/>
         <button onClick={() => setScreen("home")}>Home</button>
@@ -64,7 +77,10 @@ export default function Page() {
   }
 
   if (screen === "reading") {
+
     const data = levels[level];
+    const words = data.sentence.replace(".", "").split(" ");
+    const currentWord = words[wordIndex];
 
     return (
       <div style={{padding:30}}>
@@ -75,35 +91,45 @@ export default function Page() {
         </p>
 
         <button onClick={() => {
-  const words = data.sentence.replace(".", "").split(" ");
-  const randomWord = words[Math.floor(Math.random() * words.length)];
- const utter = new SpeechSynthesisUtterance(randomWord);
-utter.rate = 0.7;
-speechSynthesis.speak(utter);
-}}>
-🔊 Play Word
-</button>
+          const utter = new SpeechSynthesisUtterance(data.sentence);
+          utter.rate = 0.7;
+          speechSynthesis.speak(utter);
+        }}>
+          🔊 Read Full Sentence
+        </button>
 
-<button onClick={() => {
-  const utter = new SpeechSynthesisUtterance(data.sentence);
-  utter.rate = 0.7;
-  speechSynthesis.speak(utter);
-}}>
-  🔊 Read Full Sentence
-</button>
+        <br/><br/>
 
-<button onClick={() => {
-  if (userInput.toLowerCase() === randomWord.toLowerCase()) {
-    alert("✅ Correct!");
-  } else {
-    alert("❌ Try again");
-  }
-}}>
-  Check Answer
-</button>
+        <button onClick={() => {
+          const utter = new SpeechSynthesisUtterance(currentWord);
+          utter.rate = 0.7;
+          speechSynthesis.speak(utter);
+        }}>
+          🔊 Play Word
+        </button>
+
+        <br/><br/>
+
+        <input
+          type="text"
+          value={answer}
+          onChange={(e) => setAnswer(e.target.value)}
+          placeholder="Type the word you hear"
+          style={{padding:10, fontSize:18}}
+        />
+
+        <br/><br/>
+
+        <button onClick={() => checkAnswer(words)}>
+          Check Answer
+        </button>
 
         <p style={{fontSize:20}}>
           {message}
+        </p>
+
+        <p>
+          Word {wordIndex + 1} of {words.length}
         </p>
 
         <br/>
@@ -143,8 +169,6 @@ speechSynthesis.speak(utter);
   }
 
 }
-
-
 
 
 
