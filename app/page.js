@@ -22,8 +22,8 @@ const purpleButton = { ...buttonStyle, backgroundColor: "#9C27B0" };
 
 function speak(text) {
 const utter = new SpeechSynthesisUtterance(text);
-const voices = speechSynthesis.getVoices();
 
+const voices = speechSynthesis.getVoices();
 const voice = voices.find(
 v => v.lang === "en-US" || v.name.includes("Google")
 );
@@ -36,6 +36,8 @@ utter.pitch = 1.1;
 speechSynthesis.cancel();
 speechSynthesis.speak(utter);
 }
+
+/* ---------- APP ---------- */
 
 export default function Page() {
 
@@ -54,11 +56,15 @@ const levels = {
 4: { sentence: "The red bird flew over the hill." }
 };
 
+/* ---------- CHECK ANSWER ---------- */
+
 function checkAnswer(words) {
-const correctWord = words[wordIndex].toLowerCase();
 
 ```
+const correctWord = words[wordIndex].toLowerCase();
+
 if (answer.toLowerCase() === correctWord) {
+
   setMessage("⭐ Correct!");
   setStars(stars + 1);
   setAnswer("");
@@ -76,10 +82,13 @@ if (answer.toLowerCase() === correctWord) {
 
 }
 
+/* ---------- READ SENTENCE ---------- */
+
 function readSentence(words) {
-let i = 0;
 
 ```
+let i = 0;
+
 const interval = setInterval(() => {
 
   if (i >= words.length) {
@@ -107,19 +116,28 @@ return (
 ```
     <h1 style={{fontSize:40}}>📚 ReadBoost</h1>
 
-    <button style={greenButton} onClick={() => setScreen("levels")}>
+    <button
+      style={greenButton}
+      onClick={() => setScreen("levels")}
+    >
       Start Reading
     </button>
 
     <br/>
 
-    <button style={blueButton} onClick={() => setScreen("rewards")}>
+    <button
+      style={blueButton}
+      onClick={() => setScreen("rewards")}
+    >
       Rewards
     </button>
 
     <br/>
 
-    <button style={purpleButton} onClick={() => setScreen("progress")}>
+    <button
+      style={purpleButton}
+      onClick={() => setScreen("progress")}
+    >
       Parent Progress
     </button>
 
@@ -138,31 +156,62 @@ return (
 ```
     <h2 style={{fontSize:36}}>Select Level</h2>
 
-    <button style={greenButton} onClick={() => {setLevel(1); setWordIndex(0); setScreen("reading");}}>
+    <button
+      style={greenButton}
+      onClick={() => {
+        setLevel(1);
+        setWordIndex(0);
+        setScreen("reading");
+      }}
+    >
       Level 1
     </button>
 
     <br/>
 
-    <button style={greenButton} onClick={() => {setLevel(2); setWordIndex(0); setScreen("reading");}}>
+    <button
+      style={greenButton}
+      onClick={() => {
+        setLevel(2);
+        setWordIndex(0);
+        setScreen("reading");
+      }}
+    >
       Level 2
     </button>
 
     <br/>
 
-    <button style={greenButton} onClick={() => {setLevel(3); setWordIndex(0); setScreen("reading");}}>
+    <button
+      style={greenButton}
+      onClick={() => {
+        setLevel(3);
+        setWordIndex(0);
+        setScreen("reading");
+      }}
+    >
       Level 3
     </button>
 
     <br/>
 
-    <button style={greenButton} onClick={() => {setLevel(4); setWordIndex(0); setScreen("reading");}}>
+    <button
+      style={greenButton}
+      onClick={() => {
+        setLevel(4);
+        setWordIndex(0);
+        setScreen("reading");
+      }}
+    >
       Level 4
     </button>
 
     <br/><br/>
 
-    <button style={purpleButton} onClick={() => setScreen("home")}>
+    <button
+      style={purpleButton}
+      onClick={() => setScreen("home")}
+    >
       Home
     </button>
 
@@ -186,18 +235,21 @@ return (
 
     <h2 style={{fontSize:36}}>Level {level}</h2>
 
-    <p style={{
-      fontSize:48,
-      fontWeight:"bold",
-      lineHeight:1.6
-    }}>
+    <p
+      style={{
+        fontSize:48,
+        fontWeight:"bold",
+        lineHeight:1.6
+      }}
+    >
 
       {words.map((word, index) => (
         <span
           key={index}
           style={{
-            backgroundColor: index === highlightIndex ? "yellow" : "transparent",
-            marginRight: 8
+            backgroundColor:
+              index === highlightIndex ? "yellow" : "transparent",
+            marginRight:8
           }}
         >
           {word}
@@ -206,13 +258,19 @@ return (
 
     </p>
 
-    <button style={blueButton} onClick={() => readSentence(words)}>
+    <button
+      style={blueButton}
+      onClick={() => readSentence(words)}
+    >
       🔊 Read Sentence
     </button>
 
     <br/>
 
-    <button style={greenButton} onClick={() => speak(currentWord)}>
+    <button
+      style={greenButton}
+      onClick={() => speak(currentWord)}
+    >
       🔊 Play Word
     </button>
 
@@ -233,7 +291,10 @@ return (
 
     <br/><br/>
 
-    <button style={orangeButton} onClick={() => checkAnswer(words)}>
+    <button
+      style={orangeButton}
+      onClick={() => checkAnswer(words)}
+    >
       Check Answer
     </button>
 
@@ -247,7 +308,10 @@ return (
 
     <br/>
 
-    <button style={purpleButton} onClick={() => setScreen("levels")}>
+    <button
+      style={purpleButton}
+      onClick={() => setScreen("levels")}
+    >
       Back
     </button>
 
@@ -270,7 +334,10 @@ return (
       Stars earned: {stars}
     </p>
 
-    <button style={purpleButton} onClick={() => setScreen("home")}>
+    <button
+      style={purpleButton}
+      onClick={() => setScreen("home")}
+    >
       Home
     </button>
 
@@ -293,7 +360,10 @@ return (
       Stars earned: {stars}
     </p>
 
-    <button style={purpleButton} onClick={() => setScreen("home")}>
+    <button
+      style={purpleButton}
+      onClick={() => setScreen("home")}
+    >
       Home
     </button>
 
@@ -306,6 +376,8 @@ return (
 return null;
 
 }
+
+
 
 
 
