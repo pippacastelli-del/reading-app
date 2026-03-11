@@ -13,25 +13,10 @@ margin: "10px",
 color: "white"
 };
 
-const greenButton = {
-...buttonStyle,
-backgroundColor: "#4CAF50"
-};
-<h1 style={{fontSize:60, color:"red"}}>📚 ReadBoost NEW</h1>
-const blueButton = {
-...buttonStyle,
-backgroundColor: "#2196F3"
-};
-
-const orangeButton = {
-...buttonStyle,
-backgroundColor: "#FF9800"
-};
-
-const purpleButton = {
-...buttonStyle,
-backgroundColor: "#9C27B0"
-};
+const greenButton = { ...buttonStyle, backgroundColor: "#4CAF50" };
+const blueButton = { ...buttonStyle, backgroundColor: "#2196F3" };
+const orangeButton = { ...buttonStyle, backgroundColor: "#FF9800" };
+const purpleButton = { ...buttonStyle, backgroundColor: "#9C27B0" };
 
 /* ---------- SPEECH FUNCTION ---------- */
 
@@ -98,7 +83,7 @@ if (answer.toLowerCase() === correctWord) {
 
 }
 
-/* ---------- READ SENTENCE WITH HIGHLIGHT ---------- */
+/* ---------- READ SENTENCE ---------- */
 
 function readSentence(words) {
 
@@ -123,7 +108,7 @@ const interval = setInterval(() => {
 
 }
 
-/* ---------- HOME SCREEN ---------- */
+/* ---------- HOME ---------- */
 
 if (screen === "home") {
 return (
@@ -305,7 +290,7 @@ return (
 
 }
 
-/* ---------- PARENT PROGRESS ---------- */
+/* ---------- PROGRESS ---------- */
 
 if (screen === "progress") {
 return (
@@ -328,7 +313,11 @@ return (
 
 }
 
+return null;
+
 }
+
+
 
 
 
