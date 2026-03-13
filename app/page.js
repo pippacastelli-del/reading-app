@@ -45,7 +45,6 @@ if (screen === "home") {
 return (
 <div style={{textAlign:"center", padding:40}}> <h1 style={{fontSize:42}}>📚 ReadBoost</h1>
 
-```
     <button
       style={green}
       onClick={()=>setScreen("levels")}
@@ -54,7 +53,6 @@ return (
     </button>
   </div>
 );
-```
 
 }
 
@@ -62,7 +60,6 @@ if (screen === "levels") {
 return (
 <div style={{textAlign:"center", padding:40}}>
 
-```
     <h2 style={{fontSize:34}}>Choose Level</h2>
 
     {Object.keys(levels).map((l)=>(
@@ -91,13 +88,11 @@ return (
 
   </div>
 );
-```
 
 }
 
 if (screen === "reading") {
 
-```
 const sentence = levels[level];
 const words = sentence.replace(".","").split(" ");
 const current = words[wordIndex];
@@ -204,7 +199,6 @@ return (
 
   </div>
 );
-```
 
 }
 
