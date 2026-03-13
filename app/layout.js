@@ -1,11 +1,11 @@
 export const metadata = {
-  title: "Reading App",
-  description: "Practice reading",
+  title: "ReadBoost",
+  description: "Kids reading practice app"
 };
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
+    <html>
       <body>{children}</body>
     </html>
   );
