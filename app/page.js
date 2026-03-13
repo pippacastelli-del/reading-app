@@ -1,14 +1,16 @@
 "use client";
 import { useState } from "react";
 
+/* ---------- BUTTON STYLES ---------- */
+
 const buttonStyle = {
-  padding: "16px 24px",
-  fontSize: "20px",
-  borderRadius: "12px",
-  border: "none",
-  cursor: "pointer",
-  margin: "10px",
-  color: "white"
+padding: "16px 24px",
+fontSize: "20px",
+borderRadius: "12px",
+border: "none",
+cursor: "pointer",
+margin: "10px",
+color: "white"
 };
 
 const greenButton = { ...buttonStyle, backgroundColor: "#4CAF50" };
@@ -16,138 +18,217 @@ const blueButton = { ...buttonStyle, backgroundColor: "#2196F3" };
 const orangeButton = { ...buttonStyle, backgroundColor: "#FF9800" };
 const purpleButton = { ...buttonStyle, backgroundColor: "#9C27B0" };
 
+/* ---------- SPEECH ---------- */
+
 function speak(text) {
-  const utter = new SpeechSynthesisUtterance(text);
-  utter.rate = 0.75;
-  utter.pitch = 1.1;
-  speechSynthesis.cancel();
-  speechSynthesis.speak(utter);
+const utter = new SpeechSynthesisUtterance(text);
+utter.rate = 0.75;
+utter.pitch = 1.1;
+
+speechSynthesis.cancel();
+speechSynthesis.speak(utter);
 }
+
+/* ---------- APP ---------- */
 
 export default function Page() {
 
-  const [screen, setScreen] = useState("home");
-  const [level, setLevel] = useState(null);
-  const [answer, setAnswer] = useState("");
-  const [message, setMessage] = useState("");
-  const [stars, setStars] = useState(0);
-  const [wordIndex, setWordIndex] = useState(0);
+const [screen, setScreen] = useState("home");
+const [level, setLevel] = useState(null);
+const [answer, setAnswer] = useState("");
+const [message, setMessage] = useState("");
+const [stars, setStars] = useState(0);
+const [wordIndex, setWordIndex] = useState(0);
+const [completed, setCompleted] = useState(false);
 
-  const levels = {
-    1: { sentence: "The cat sat on the mat." },
-    2: { sentence: "The dog ran to the tree." }
-  };
+const levels = {
+1: { sentence: "The cat sat on the mat." },
+2: { sentence: "The dog ran to the tree." },
+3: { sentence: "Sam and Tom went to the park." },
+4: { sentence: "The red bird flew over the hill." }
+};
 
-  function checkAnswer(words) {
-    const correctWord = words[wordIndex].toLowerCase();
+function checkAnswer(words) {
 
-    if (answer.toLowerCase() === correctWord) {
-      setMessage("⭐ Correct!");
-      setStars(stars + 1);
-      setAnswer("");
+```
+const correct = words[wordIndex].toLowerCase();
 
-      if (wordIndex < words.length - 1) {
-        setWordIndex(wordIndex + 1);
-      } else {
-        setMessage("🎉 Sentence Complete!");
-      }
-    } else {
-      setMessage("❌ Try again");
-    }
+if (answer.toLowerCase() === correct) {
+
+  setStars(stars + 1);
+  setAnswer("");
+  setMessage("⭐ Correct!");
+
+  if (wordIndex < words.length - 1) {
+    setWordIndex(wordIndex + 1);
+  } else {
+    setCompleted(true);
+    setMessage("🎉 Level Complete!");
   }
 
-  if (screen === "home") {
-    return (
-      <div style={{padding:30,textAlign:"center"}}>
-        <h1 style={{fontSize:40}}>📚 ReadBoost</h1>
+} else {
+  setMessage("❌ Try again");
+}
+```
 
-        <button style={greenButton} onClick={()=>setScreen("levels")}>
-          Start Reading
-        </button>
+}
 
-        <br/>
+/* ---------- HOME ---------- */
 
-        <button style={blueButton} onClick={()=>setScreen("rewards")}>
-          Rewards
-        </button>
-      </div>
-    );
-  }
+if (screen === "home") {
+return (
+<div style={{padding:30, textAlign:"center"}}>
 
-  if (screen === "levels") {
-    return (
-      <div style={{padding:30,textAlign:"center"}}>
-        <h2>Select Level</h2>
+```
+    <h1 style={{fontSize:42}}>📚 ReadBoost</h1>
 
-        <button style={greenButton} onClick={()=>{setLevel(1);setWordIndex(0);setScreen("reading");}}>
-          Level 1
-        </button>
+    <button
+      style={greenButton}
+      onClick={() => setScreen("levels")}
+    >
+      Start Reading
+    </button>
 
-        <button style={greenButton} onClick={()=>{setLevel(2);setWordIndex(0);setScreen("reading");}}>
-          Level 2
-        </button>
+  </div>
+);
+```
 
-        <br/><br/>
+}
 
-        <button style={purpleButton} onClick={()=>setScreen("home")}>
-          Home
-        </button>
-      </div>
-    );
-  }
+/* ---------- LEVEL SELECT ---------- */
 
-  if (screen === "reading") {
+if (screen === "levels") {
+return (
+<div style={{padding:30, textAlign:"center"}}>
 
-    const data = levels[level];
-    const words = data.sentence.replace(".", "").split(" ");
-    const currentWord = words[wordIndex];
+```
+    <h2 style={{fontSize:36}}>Select Level</h2>
 
-    return (
-      <div style={{padding:30,textAlign:"center"}}>
+    {Object.keys(levels).map((lvl) => (
+      <button
+        key={lvl}
+        style={greenButton}
+        onClick={()=>{
+          setLevel(lvl);
+          setWordIndex(0);
+          setCompleted(false);
+          setScreen("reading");
+        }}
+      >
+        Level {lvl}
+      </button>
+    ))}
 
-        <h2>Level {level}</h2>
+    <br/><br/>
 
-        <p style={{fontSize:40,fontWeight:"bold"}}>
-          {data.sentence}
-        </p>
+    <button
+      style={purpleButton}
+      onClick={()=>setScreen("home")}
+    >
+      Back
+    </button>
 
-        <button style={blueButton} onClick={()=>speak(currentWord)}>
-          🔊 Play Word
-        </button>
+  </div>
+);
+```
 
-        <br/><br/>
+}
 
-        <input
-          value={answer}
-          onChange={(e)=>setAnswer(e.target.value)}
-          placeholder="Type the word you hear"
-          style={{fontSize:20,padding:10}}
-        />
+/* ---------- READING ---------- */
 
-        <br/><br/>
+if (screen === "reading") {
 
-        <button style={orangeButton} onClick={()=>checkAnswer(words)}>
-          Check Answer
-        </button>
+```
+const sentence = levels[level].sentence;
+const words = sentence.replace(".", "").split(" ");
+const currentWord = words[wordIndex];
 
-        <p>{message}</p>
+return (
+  <div style={{padding:30, textAlign:"center"}}>
 
-      </div>
-    );
-  }
+    <h2 style={{fontSize:36}}>Level {level}</h2>
 
-  if (screen === "rewards") {
-    return (
-      <div style={{padding:30,textAlign:"center"}}>
-        <h2>⭐ Rewards</h2>
-        <p>Stars earned: {stars}</p>
+    <p style={{fontSize:42}}>
+      {sentence}
+    </p>
 
-        <button style={purpleButton} onClick={()=>setScreen("home")}>
-          Home
-        </button>
-      </div>
-    );
-  }
+    <button
+      style={blueButton}
+      onClick={()=>speak(sentence)}
+    >
+      🔊 Read Sentence
+    </button>
 
-  return null;
+    <button
+      style={blueButton}
+      onClick={()=>speak(currentWord)}
+    >
+      🔊 Hear Word
+    </button>
+
+    <br/><br/>
+
+    {!completed && (
+    <>
+    <input
+      value={answer}
+      onChange={(e)=>setAnswer(e.target.value)}
+      placeholder="Type the word you hear"
+      style={{
+        padding:12,
+        fontSize:22,
+        borderRadius:10,
+        border:"1px solid #ccc"
+      }}
+    />
+
+    <br/><br/>
+
+    <button
+      style={orangeButton}
+      onClick={()=>checkAnswer(words)}
+    >
+      Check
+    </button>
+    </>
+    )}
+
+    <p style={{fontSize:24}}>
+      {message}
+    </p>
+
+    {completed && (
+      <>
+      <button
+        style={greenButton}
+        onClick={()=>setScreen("levels")}
+      >
+        Next Level
+      </button>
+
+      <button
+        style={purpleButton}
+        onClick={()=>setScreen("home")}
+      >
+        Home
+      </button>
+      </>
+    )}
+
+    <br/><br/>
+
+    <button
+      style={purpleButton}
+      onClick={()=>setScreen("levels")}
+    >
+      Back
+    </button>
+
+  </div>
+);
+```
+
+}
+
+return null;
 }
