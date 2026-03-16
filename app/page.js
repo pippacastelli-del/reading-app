@@ -73,7 +73,7 @@ return (
 
     <h2 style={{fontSize:34}}>Choose Level</h2>
 
-  {Object.keys(levels).map((l)=>(
+{Object.keys(levels).map((l)=>(
   <button
     key={l}
     style={green}
@@ -89,9 +89,6 @@ return (
     Level {l}
   </button>
 ))}
-        Level {l}
-      </button>
-    ))}
 
     <br/>
 
