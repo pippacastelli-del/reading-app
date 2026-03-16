@@ -73,16 +73,22 @@ return (
 
     <h2 style={{fontSize:34}}>Choose Level</h2>
 
-    {Object.keys(levels).map((l)=>(
-      <button
-        key={l}
-        style={green}
-        onClick={()=>{
-          setLevel(l);
-          setWordIndex(0);
-          setComplete(false);
-          setScreen("reading");
-        }}
+  {Object.keys(levels).map((l)=>(
+  <button
+    key={l}
+    style={green}
+    onClick={()=>{
+      setLevel(l);
+      setWordIndex(0);
+      setAnswer("");
+      setMessage("");
+      setComplete(false);
+      setScreen("reading");
+    }}
+  >
+    Level {l}
+  </button>
+))}
       >
         Level {l}
       </button>
