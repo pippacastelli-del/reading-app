@@ -33,13 +33,24 @@ const [answer, setAnswer] = useState("");
 const [message, setMessage] = useState("");
 const [complete, setComplete] = useState(false);
 
-const levels = {
-1: "The cat sat on the mat.",
-2: "The dog ran to the tree.",
-3: "Sam and Tom went to the park.",
-4: "The red bird flew over the hill.",
-5: "The small frog jumped in the pond."
-};
+const sentences = [
+  "The cat sat on the mat.",
+  "The dog ran to the tree.",
+  "The red bird flew over the hill.",
+  "Sam and Tom went to the park.",
+  "The small frog jumped in the pond.",
+  "The sun is bright in the sky.",
+  "A big fish swims in the lake.",
+  "The boy kicks the red ball.",
+  "The girl reads a fun book.",
+  "The duck walks by the pond."
+];
+
+const levels = {};
+
+sentences.forEach((sentence, index) => {
+  levels[index + 1] = sentence;
+});
 
 if (screen === "home") {
 return (
