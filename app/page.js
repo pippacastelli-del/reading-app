@@ -89,7 +89,6 @@ return (
     Level {l}
   </button>
 ))}
-      >
         Level {l}
       </button>
     ))}
