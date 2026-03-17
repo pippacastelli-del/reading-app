@@ -1,20 +1,17 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 
 const stories = {
   Beginner: [
     { text: "The cat sat on the mat." },
-    { text: "The dog ran fast." },
-    { text: "I see a red ball." }
+    { text: "The dog ran fast." }
   ],
   Easy: [
-    { text: "The small bird sings in the tree." },
-    { text: "Tom likes to read a book." }
+    { text: "The small bird sings in the tree." }
   ],
   Medium: [
-    { text: "Lucy went to the park to play with her friend." },
-    { text: "The sun was bright and warm in the sky." }
+    { text: "Lucy went to the park to play with her friend." }
   ]
 };
 
@@ -22,189 +19,145 @@ const clean = (text) =>
   text
     .toLowerCase()
     .replace(/[.,!?]/g, "")
-    .replace(/\s+/g, " ")
     .trim();
-
-const similar = (a, b) => {
-  if (a === b) return true;
-  return a.startsWith(b) || b.startsWith(a);
-};
 
 export default function ReadingApp() {
   const [level, setLevel] = useState(null);
   const [index, setIndex] = useState(0);
-  const [listening, setListening] = useState(false);
-  const [spoken, setSpoken] = useState("");
-  const [score, setScore] = useState(null);
+  const [wordIndex, setWordIndex] = useState(0);
+  const [input, setInput] = useState("");
+  const [feedback, setFeedback] = useState("");
   const [stars, setStars] = useState(0);
 
-  const recognitionRef = useRef(null);
+  const currentStory = level ? stories[level][index].text : "";
+  const words = clean(currentStory).split(" ");
 
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const SpeechRecognition =
-        window.SpeechRecognition || window.webkitSpeechRecognition;
+  const speak = (text) => {
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.rate = 0.6; // slow
+    utterance.pitch = 1;
+    speechSynthesis.speak(utterance);
+  };
 
-      if (SpeechRecognition) {
-        const recognition = new SpeechRecognition();
-        recognition.continuous = true;
-        recognition.interimResults = true;
+  const checkWord = () => {
+    const expected = words[wordIndex];
+    const typed = clean(input);
 
-        recognition.onresult = (event) => {
-          let transcript = "";
-          for (let i = event.resultIndex; i < event.results.length; i++) {
-            transcript += event.results[i][0].transcript;
-          }
-          setSpoken(transcript);
-        };
-
-        recognitionRef.current = recognition;
-      }
+    if (typed === expected) {
+      setFeedback("✅ Correct!");
+      setStars((s) => s + 1);
+      setWordIndex((i) => i + 1);
+    } else {
+      setFeedback("❌ Try again");
     }
-  }, []);
 
-  const startReading = () => {
-    setSpoken("");
-    setScore(null);
-    setListening(true);
-    recognitionRef.current?.start();
-  };
-
-  const stopReading = () => {
-    recognitionRef.current?.stop();
-    setListening(false);
-
-    const expectedWords = clean(currentStory).split(" ");
-    const spokenWords = clean(spoken).split(" ");
-
-    let correct = 0;
-
-    expectedWords.forEach((word, i) => {
-      if (spokenWords[i] && similar(spokenWords[i], word)) {
-        correct++;
-      }
-    });
-
-    const accuracy = Math.round((correct / expectedWords.length) * 100);
-    setScore(accuracy);
-    setStars((prev) => prev + Math.max(1, Math.floor(accuracy / 30)));
-  };
-
-  const nextStory = () => {
-    setIndex((prev) => (prev + 1) % stories[level].length);
-    setScore(null);
-    setSpoken("");
+    setInput("");
   };
 
   if (!level) {
     return (
       <div className="p-10 text-center">
-        <h1 className="text-4xl font-bold mb-8">📚 Read With Me</h1>
-        <p className="mb-6 text-lg">Choose a level</p>
+        <h1 className="text-5xl font-bold mb-10">📚 Read With Me</h1>
 
-        <div className="space-y-4">
-          <button
-            onClick={() => setLevel("Beginner")}
-            className="w-60 py-3 bg-green-400 hover:bg-green-500 text-white text-lg rounded-2xl shadow-lg"
-          >
-            🟢 Beginner
-          </button>
+        <button
+          onClick={() => setLevel("Beginner")}
+          className="w-80 h-20 mb-6 bg-green-500 text-white text-2xl rounded-3xl shadow-xl"
+        >
+          🟢 BEGINNER
+        </button>
 
-          <button
-            onClick={() => setLevel("Easy")}
-            className="w-60 py-3 bg-yellow-400 hover:bg-yellow-500 text-white text-lg rounded-2xl shadow-lg"
-          >
-            🟡 Easy
-          </button>
+        <button
+          onClick={() => setLevel("Easy")}
+          className="w-80 h-20 mb-6 bg-yellow-500 text-white text-2xl rounded-3xl shadow-xl"
+        >
+          🟡 EASY
+        </button>
 
-          <button
-            onClick={() => setLevel("Medium")}
-            className="w-60 py-3 bg-red-400 hover:bg-red-500 text-white text-lg rounded-2xl shadow-lg"
-          >
-            🔴 Medium
-          </button>
-        </div>
+        <button
+          onClick={() => setLevel("Medium")}
+          className="w-80 h-20 bg-red-500 text-white text-2xl rounded-3xl shadow-xl"
+        >
+          🔴 MEDIUM
+        </button>
 
-        <p className="mt-8 text-xl">⭐ Stars: {stars}</p>
+        <p className="mt-10 text-2xl">⭐ Stars: {stars}</p>
       </div>
     );
   }
 
-  const currentStory = stories[level][index].text;
-  const expectedWords = clean(currentStory).split(" ");
-  const spokenWords = clean(spoken).split(" ");
-
   return (
     <div className="p-10 text-center">
-      <h2 className="text-3xl font-bold mb-4">{level} Story</h2>
+      <h2 className="text-4xl font-bold mb-6">{level}</h2>
 
-      <div className="text-xl mb-6 border p-6 rounded-2xl bg-gray-50">
-        {expectedWords.map((word, i) => {
-          let color = "text-gray-400";
-
-          if (spokenWords[i]) {
-            if (similar(spokenWords[i], word)) {
-              color = "text-green-600";
-            } else {
-              color = "text-red-500";
-            }
-          }
-
-          return (
-            <span key={i} className={`${color} mr-2 font-semibold`}>
-              {word}
-            </span>
-          );
-        })}
+      <div className="text-2xl mb-6">
+        {words.map((w, i) => (
+          <span
+            key={i}
+            className={`mr-2 ${
+              i === wordIndex ? "underline text-blue-600" : "text-gray-400"
+            }`}
+          >
+            {w}
+          </span>
+        ))}
       </div>
 
-      {!listening && score === null && (
+      {/* BIG BUTTONS */}
+      <div className="space-y-6">
         <button
-          onClick={startReading}
-          className="px-8 py-3 bg-green-500 hover:bg-green-600 text-white text-lg rounded-2xl shadow-lg"
+          onClick={() => speak(currentStory)}
+          className="w-full max-w-xl h-20 bg-blue-500 text-white text-2xl rounded-3xl shadow-xl"
         >
-          ▶️ Start Reading
+          🔊 READ SENTENCE
         </button>
-      )}
 
-      {listening && (
         <button
-          onClick={stopReading}
-          className="px-8 py-3 bg-purple-500 hover:bg-purple-600 text-white text-lg rounded-2xl shadow-lg"
+          onClick={() => speak(words[wordIndex])}
+          className="w-full max-w-xl h-20 bg-purple-500 text-white text-2xl rounded-3xl shadow-xl"
         >
-          ⏹ Stop Reading
+          🔉 READ WORD
         </button>
-      )}
+      </div>
 
-      {score !== null && (
-        <div className="mt-6">
-          <p className="text-2xl font-bold">🎉 Great job!</p>
-          <p className="text-lg">Accuracy: {score}%</p>
-          <button
-            onClick={nextStory}
-            className="mt-4 px-8 py-3 bg-blue-500 hover:bg-blue-600 text-white text-lg rounded-2xl shadow-lg"
-          >
-            ➡️ Next Story
-          </button>
-        </div>
-      )}
+      {/* INPUT */}
+      <div className="mt-8">
+        <input
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          className="border p-4 text-2xl rounded-xl w-80 text-center"
+          placeholder="Type the word"
+        />
 
-      <p className="mt-8 text-xl">⭐ Stars: {stars}</p>
+        <br />
+
+        <button
+          onClick={checkWord}
+          className="mt-4 w-64 h-16 bg-green-600 text-white text-xl rounded-2xl shadow-lg"
+        >
+          ✅ CHECK
+        </button>
+      </div>
+
+      <p className="mt-6 text-2xl">{feedback}</p>
+
+      <p className="mt-6 text-xl">⭐ Stars: {stars}</p>
 
       <button
         onClick={() => {
           setLevel(null);
           setIndex(0);
-          setScore(null);
-          setSpoken("");
+          setWordIndex(0);
+          setInput("");
+          setFeedback("");
         }}
-        className="block mx-auto mt-6 text-sm underline"
+        className="mt-10 underline"
       >
-        Back to Levels
+        Back
       </button>
     </div>
   );
 }
+
 
 
 
