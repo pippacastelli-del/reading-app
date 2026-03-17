@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useEffect, useRef } from "react";
 
 const stories = {
@@ -190,6 +192,7 @@ export default function ReadingApp() {
     </div>
   );
 }
+
 
 
 
