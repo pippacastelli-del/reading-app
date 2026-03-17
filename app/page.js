@@ -18,7 +18,6 @@ const stories = {
   ]
 };
 
-// --- Helpers ---
 const clean = (text) =>
   text
     .toLowerCase()
@@ -100,18 +99,33 @@ export default function ReadingApp() {
   if (!level) {
     return (
       <div className="p-10 text-center">
-        <h1 className="text-3xl font-bold mb-6">Read With Me</h1>
-        <p className="mb-4">Choose a level</p>
-        {Object.keys(stories).map((lvl) => (
+        <h1 className="text-4xl font-bold mb-8">📚 Read With Me</h1>
+        <p className="mb-6 text-lg">Choose a level</p>
+
+        <div className="space-y-4">
           <button
-            key={lvl}
-            onClick={() => setLevel(lvl)}
-            className="block mx-auto mb-3 px-6 py-2 bg-blue-500 text-white rounded-2xl"
+            onClick={() => setLevel("Beginner")}
+            className="w-60 py-3 bg-green-400 hover:bg-green-500 text-white text-lg rounded-2xl shadow-lg"
           >
-            {lvl}
+            🟢 Beginner
           </button>
-        ))}
-        <p className="mt-6">⭐ Stars: {stars}</p>
+
+          <button
+            onClick={() => setLevel("Easy")}
+            className="w-60 py-3 bg-yellow-400 hover:bg-yellow-500 text-white text-lg rounded-2xl shadow-lg"
+          >
+            🟡 Easy
+          </button>
+
+          <button
+            onClick={() => setLevel("Medium")}
+            className="w-60 py-3 bg-red-400 hover:bg-red-500 text-white text-lg rounded-2xl shadow-lg"
+          >
+            🔴 Medium
+          </button>
+        </div>
+
+        <p className="mt-8 text-xl">⭐ Stars: {stars}</p>
       </div>
     );
   }
@@ -122,18 +136,17 @@ export default function ReadingApp() {
 
   return (
     <div className="p-10 text-center">
-      <h2 className="text-2xl font-bold mb-4">{level} Story</h2>
+      <h2 className="text-3xl font-bold mb-4">{level} Story</h2>
 
-      {/* Highlighted Text */}
-      <div className="text-xl mb-6 border p-6 rounded-2xl">
+      <div className="text-xl mb-6 border p-6 rounded-2xl bg-gray-50">
         {expectedWords.map((word, i) => {
           let color = "text-gray-400";
 
           if (spokenWords[i]) {
             if (similar(spokenWords[i], word)) {
-              color = "text-green-600"; // correct
+              color = "text-green-600";
             } else {
-              color = "text-red-500"; // incorrect
+              color = "text-red-500";
             }
           }
 
@@ -148,35 +161,35 @@ export default function ReadingApp() {
       {!listening && score === null && (
         <button
           onClick={startReading}
-          className="px-6 py-2 bg-green-500 text-white rounded-2xl"
+          className="px-8 py-3 bg-green-500 hover:bg-green-600 text-white text-lg rounded-2xl shadow-lg"
         >
-          Start Reading
+          ▶️ Start Reading
         </button>
       )}
 
       {listening && (
         <button
           onClick={stopReading}
-          className="px-6 py-2 bg-purple-500 text-white rounded-2xl"
+          className="px-8 py-3 bg-purple-500 hover:bg-purple-600 text-white text-lg rounded-2xl shadow-lg"
         >
-          Stop Reading
+          ⏹ Stop Reading
         </button>
       )}
 
       {score !== null && (
         <div className="mt-6">
-          <p className="text-xl">Great job!</p>
-          <p>Accuracy: {score}%</p>
+          <p className="text-2xl font-bold">🎉 Great job!</p>
+          <p className="text-lg">Accuracy: {score}%</p>
           <button
             onClick={nextStory}
-            className="mt-4 px-6 py-2 bg-blue-500 text-white rounded-2xl"
+            className="mt-4 px-8 py-3 bg-blue-500 hover:bg-blue-600 text-white text-lg rounded-2xl shadow-lg"
           >
-            Next Story
+            ➡️ Next Story
           </button>
         </div>
       )}
 
-      <p className="mt-8">⭐ Stars: {stars}</p>
+      <p className="mt-8 text-xl">⭐ Stars: {stars}</p>
 
       <button
         onClick={() => {
@@ -192,6 +205,7 @@ export default function ReadingApp() {
     </div>
   );
 }
+
 
 
 
