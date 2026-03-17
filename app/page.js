@@ -120,7 +120,40 @@ function checkAnswer(){
 
 const correct=levels[level][sentenceIndex];
 
-if(answer.trim().toLowerCase()===correct.toLowerCase()){
+function cleanText(text){
+  return text
+    .toLowerCase()
+    .trim()
+    .replace(/[.,!?]/g,"")   // remove punctuation
+    .replace(/\s+/g," ");    // remove extra spaces
+}
+
+function checkAnswer(){
+
+const correct = levels[level][sentenceIndex];
+
+if(cleanText(answer) === cleanText(correct)){
+
+  setMessage("✅ Correct!");
+
+  if(sentenceIndex + 1 < levels[level].length){
+
+    setTimeout(()=>{
+      setSentenceIndex(sentenceIndex + 1);
+      setAnswer("");
+      setMessage("");
+      setHighlightIndex(-1);
+    },1000);
+
+  }else{
+    setComplete(true);
+  }
+
+}else{
+  setMessage("❌ Try Again");
+}
+
+}
 
 setMessage("✅ Correct!");
 
