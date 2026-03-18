@@ -209,14 +209,17 @@ utterance.rate = 0.6;
 utterance.pitch = 1.1;
 utterance.voice = voice;
 
-// stop any previous speech + highlight loop
+// stop previous
 speechSynthesis.cancel();
 if(intervalId) clearInterval(intervalId);
 
-// start speaking
-speechSynthesis.speak(utterance);
+// 🔥 estimate total speaking time
+const avgWordTime = 500 / utterance.rate; 
+const totalTime = words.length * avgWordTime;
 
-// 🔥 manual highlight loop
+// 🔥 calculate per-word timing
+const timePerWord = totalTime / words.length;
+
 let i = 0;
 
 const newInterval = setInterval(()=>{
@@ -226,10 +229,13 @@ i++;
 
 if(i >= words.length){
 clearInterval(newInterval);
-setTimeout(()=>setHighlightIndex(-1),500);
+setTimeout(()=>setHighlightIndex(-1),300);
 }
 
-}, 600);
+}, timePerWord);
+
+// start speaking AFTER timer starts (better sync)
+speechSynthesis.speak(utterance);
 
 setIntervalId(newInterval);
 
