@@ -57,6 +57,7 @@ const [answer,setAnswer] = useState("");
 const [message,setMessage] = useState("");
 const [complete,setComplete] = useState(false);
 const [voice,setVoice] = useState(null);
+const [intervalId,setIntervalId] = useState(null);
 
 const buttonStyle={
 padding:"15px 30px",
@@ -96,7 +97,7 @@ function cleanText(text){
 return text.toLowerCase().trim().replace(/[.,!?]/g,"").replace(/\s+/g," ");
 }
 
-// 🔊 Sentence with AUTO highlight
+// 🔊 Sentence with FIXED highlight
 function speakSentence(){
 
 const sentence = levels[level][sentenceIndex];
@@ -108,35 +109,29 @@ utterance.rate = 0.6;
 utterance.pitch = 1.1;
 utterance.voice = voice;
 
-utterance.onboundary = (event) => {
-
-if(event.name === "word"){
-
-const charIndex = event.charIndex;
-
-let total = 0;
-
-for(let i=0;i<words.length;i++){
-
-total += words[i].length + 1;
-
-if(charIndex < total){
-setHighlightIndex(i);
-break;
-}
-
-}
-
-}
-
-};
-
-utterance.onend = () => {
-setHighlightIndex(-1);
-};
-
+// stop any previous speech + highlight loop
 speechSynthesis.cancel();
+if(intervalId) clearInterval(intervalId);
+
+// start speaking
 speechSynthesis.speak(utterance);
+
+// 🔥 manual highlight loop
+let i = 0;
+
+const newInterval = setInterval(()=>{
+
+setHighlightIndex(i);
+i++;
+
+if(i >= words.length){
+clearInterval(newInterval);
+setTimeout(()=>setHighlightIndex(-1),500);
+}
+
+}, 600);
+
+setIntervalId(newInterval);
 
 }
 
