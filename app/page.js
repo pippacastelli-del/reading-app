@@ -52,6 +52,7 @@ const [screen,setScreen] = useState("home");
 const [level,setLevel] = useState(1);
 const [sentenceIndex,setSentenceIndex] = useState(0);
 const [wordIndex,setWordIndex] = useState(0);
+const [highlightIndex,setHighlightIndex] = useState(-1);
 const [answer,setAnswer] = useState("");
 const [message,setMessage] = useState("");
 const [complete,setComplete] = useState(false);
@@ -68,7 +69,7 @@ margin:10,
 cursor:"pointer"
 };
 
-// 🔊 Load female voice
+// 🔊 Load voice
 useEffect(()=>{
 
 function loadVoices(){
@@ -87,55 +88,81 @@ setVoice(femaleVoice || voices[0]);
 }
 
 loadVoices();
-
 speechSynthesis.onvoiceschanged = loadVoices;
 
 },[]);
 
-// Clean text for checking
 function cleanText(text){
 return text.toLowerCase().trim().replace(/[.,!?]/g,"").replace(/\s+/g," ");
 }
 
-// 🔊 Speak full sentence
+// 🔊 Sentence with AUTO highlight
 function speakSentence(){
 
-const sentence=levels[level][sentenceIndex];
+const sentence = levels[level][sentenceIndex];
+const words = sentence.split(" ");
 
-const utterance=new SpeechSynthesisUtterance(sentence);
+const utterance = new SpeechSynthesisUtterance(sentence);
 
-utterance.rate=0.6;
-utterance.pitch=1.1;
-utterance.voice=voice;
+utterance.rate = 0.6;
+utterance.pitch = 1.1;
+utterance.voice = voice;
+
+utterance.onboundary = (event) => {
+
+if(event.name === "word"){
+
+const charIndex = event.charIndex;
+
+let total = 0;
+
+for(let i=0;i<words.length;i++){
+
+total += words[i].length + 1;
+
+if(charIndex < total){
+setHighlightIndex(i);
+break;
+}
+
+}
+
+}
+
+};
+
+utterance.onend = () => {
+setHighlightIndex(-1);
+};
 
 speechSynthesis.cancel();
 speechSynthesis.speak(utterance);
 
 }
 
-// 🔈 Speak single word
+// 🔈 Word
 function speakWord(){
 
-const words=levels[level][sentenceIndex].split(" ");
-const word=words[wordIndex];
+const words = levels[level][sentenceIndex].split(" ");
+const word = words[wordIndex];
 
-const utterance=new SpeechSynthesisUtterance(word);
+const utterance = new SpeechSynthesisUtterance(word);
 
-utterance.rate=0.5;
-utterance.pitch=1.1;
-utterance.voice=voice;
+utterance.rate = 0.5;
+utterance.pitch = 1.1;
+utterance.voice = voice;
 
 speechSynthesis.cancel();
 speechSynthesis.speak(utterance);
 
 }
 
-// ✅ Check answer (word-by-word)
+// ✅ Check
 function checkAnswer(){
 
-const sentence=levels[level][sentenceIndex];
-const words=sentence.split(" ");
-const correctWord=words[wordIndex];
+const sentence = levels[level][sentenceIndex];
+const words = sentence.split(" ");
+const correctWord = words[wordIndex];
 
 if(cleanText(answer)===cleanText(correctWord)){
 
@@ -147,6 +174,7 @@ setTimeout(()=>{
 setWordIndex(wordIndex+1);
 setAnswer("");
 setMessage("");
+setHighlightIndex(-1);
 },800);
 
 }else{
@@ -158,41 +186,37 @@ setSentenceIndex(sentenceIndex+1);
 setWordIndex(0);
 setAnswer("");
 setMessage("");
+setHighlightIndex(-1);
 },800);
 
 }else{
-
 setComplete(true);
-
 }
 
 }
 
 }else{
-
 setMessage("❌ Try Again");
-
 }
 
 }
 
 function startLevel(l){
-
 setLevel(Number(l));
 setSentenceIndex(0);
 setWordIndex(0);
 setAnswer("");
 setMessage("");
 setComplete(false);
+setHighlightIndex(-1);
 setScreen("reading");
-
 }
 
 function goHome(){
 setScreen("home");
 }
 
-// 🏠 Home
+// 🏠
 if(screen==="home"){
 return(
 <div style={{textAlign:"center",padding:40}}>
@@ -206,7 +230,7 @@ Start Reading
 );
 }
 
-// 📚 Levels
+// 📚
 if(screen==="levels"){
 return(
 <div style={{textAlign:"center",padding:40}}>
@@ -224,11 +248,11 @@ Level {l}
 );
 }
 
-// 🎯 Reading
+// 🎯
 if(screen==="reading"){
 
-const sentence=levels[level][sentenceIndex];
-const words=sentence.split(" ");
+const sentence = levels[level][sentenceIndex];
+const words = sentence.split(" ");
 
 return(
 <div style={{textAlign:"center",padding:40}}>
@@ -241,7 +265,10 @@ return(
 <span
 key={i}
 style={{
-backgroundColor:i===wordIndex?"yellow":"transparent",
+backgroundColor:
+i===highlightIndex ? "#FFD54F" :
+i===wordIndex ? "yellow" :
+"transparent",
 padding:"6px",
 marginRight:"6px",
 borderRadius:"6px"
