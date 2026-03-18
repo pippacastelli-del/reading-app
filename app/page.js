@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function Home() {
 
@@ -55,6 +55,7 @@ const [wordIndex,setWordIndex] = useState(0);
 const [answer,setAnswer] = useState("");
 const [message,setMessage] = useState("");
 const [complete,setComplete] = useState(false);
+const [voice,setVoice] = useState(null);
 
 const buttonStyle={
 padding:"15px 30px",
@@ -67,37 +68,69 @@ margin:10,
 cursor:"pointer"
 };
 
-function cleanText(text){
-return text
-.toLowerCase()
-.trim()
-.replace(/[.,!?]/g,"")
-.replace(/\s+/g," ");
+// 🔊 Load female voice
+useEffect(()=>{
+
+function loadVoices(){
+
+const voices = speechSynthesis.getVoices();
+
+const femaleVoice = voices.find(v =>
+v.name.toLowerCase().includes("female") ||
+v.name.toLowerCase().includes("samantha") ||
+v.name.toLowerCase().includes("karen") ||
+v.name.toLowerCase().includes("zira")
+);
+
+setVoice(femaleVoice || voices[0]);
+
 }
 
+loadVoices();
+
+speechSynthesis.onvoiceschanged = loadVoices;
+
+},[]);
+
+// Clean text for checking
+function cleanText(text){
+return text.toLowerCase().trim().replace(/[.,!?]/g,"").replace(/\s+/g," ");
+}
+
+// 🔊 Speak full sentence
 function speakSentence(){
 
 const sentence=levels[level][sentenceIndex];
 
 const utterance=new SpeechSynthesisUtterance(sentence);
-utterance.rate=0.8;
 
+utterance.rate=0.6;
+utterance.pitch=1.1;
+utterance.voice=voice;
+
+speechSynthesis.cancel();
 speechSynthesis.speak(utterance);
 
 }
 
+// 🔈 Speak single word
 function speakWord(){
 
 const words=levels[level][sentenceIndex].split(" ");
 const word=words[wordIndex];
 
 const utterance=new SpeechSynthesisUtterance(word);
-utterance.rate=0.8;
 
+utterance.rate=0.5;
+utterance.pitch=1.1;
+utterance.voice=voice;
+
+speechSynthesis.cancel();
 speechSynthesis.speak(utterance);
 
 }
 
+// ✅ Check answer (word-by-word)
 function checkAnswer(){
 
 const sentence=levels[level][sentenceIndex];
@@ -159,32 +192,24 @@ function goHome(){
 setScreen("home");
 }
 
+// 🏠 Home
 if(screen==="home"){
-
 return(
 <div style={{textAlign:"center",padding:40}}>
-
 <h1 style={{fontSize:48}}>ReadBoost</h1>
-
 <button style={buttonStyle} onClick={()=>setScreen("levels")}>
 Start Reading
 </button>
-
 <br/>
-
-<button style={buttonStyle}>
-Rewards
-</button>
-
+<button style={buttonStyle}>Rewards</button>
 </div>
 );
 }
 
+// 📚 Levels
 if(screen==="levels"){
-
 return(
 <div style={{textAlign:"center",padding:40}}>
-
 <h2 style={{fontSize:36}}>Choose Level</h2>
 
 {Object.keys(levels).map((l)=>(
@@ -194,15 +219,12 @@ Level {l}
 ))}
 
 <br/><br/>
-
-<button style={buttonStyle} onClick={goHome}>
-Back
-</button>
-
+<button style={buttonStyle} onClick={goHome}>Back</button>
 </div>
 );
 }
 
+// 🎯 Reading
 if(screen==="reading"){
 
 const sentence=levels[level][sentenceIndex];
