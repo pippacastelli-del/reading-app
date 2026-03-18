@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-export default function Home(){
+export default function Home() {
 
 const levels = {
 
@@ -51,10 +51,10 @@ const levels = {
 const [screen,setScreen] = useState("home");
 const [level,setLevel] = useState(1);
 const [sentenceIndex,setSentenceIndex] = useState(0);
+const [wordIndex,setWordIndex] = useState(0);
 const [answer,setAnswer] = useState("");
 const [message,setMessage] = useState("");
 const [complete,setComplete] = useState(false);
-const [highlightIndex,setHighlightIndex] = useState(-1);
 
 const buttonStyle={
 padding:"15px 30px",
@@ -67,37 +67,20 @@ margin:10,
 cursor:"pointer"
 };
 
+function cleanText(text){
+return text
+.toLowerCase()
+.trim()
+.replace(/[.,!?]/g,"")
+.replace(/\s+/g," ");
+}
+
 function speakSentence(){
 
 const sentence=levels[level][sentenceIndex];
-const words=sentence.split(" ");
 
 const utterance=new SpeechSynthesisUtterance(sentence);
 utterance.rate=0.8;
-
-utterance.onboundary=(event)=>{
-
-if(event.name==="word"){
-
-const charIndex=event.charIndex;
-let total=0;
-
-for(let i=0;i<words.length;i++){
-
-total+=words[i].length+1;
-
-if(charIndex<total){
-setHighlightIndex(i);
-break;
-}
-
-}
-
-}
-
-};
-
-utterance.onend=()=>setHighlightIndex(-1);
 
 speechSynthesis.speak(utterance);
 
@@ -106,8 +89,7 @@ speechSynthesis.speak(utterance);
 function speakWord(){
 
 const words=levels[level][sentenceIndex].split(" ");
-
-const word=words[highlightIndex>=0?highlightIndex:0];
+const word=words[wordIndex];
 
 const utterance=new SpeechSynthesisUtterance(word);
 utterance.rate=0.8;
@@ -118,56 +100,38 @@ speechSynthesis.speak(utterance);
 
 function checkAnswer(){
 
-const correct=levels[level][sentenceIndex];
+const sentence=levels[level][sentenceIndex];
+const words=sentence.split(" ");
+const correctWord=words[wordIndex];
 
-function cleanText(text){
-  return text
-    .toLowerCase()
-    .trim()
-    .replace(/[.,!?]/g,"")   // remove punctuation
-    .replace(/\s+/g," ");    // remove extra spaces
-}
-
-function checkAnswer(){
-
-const correct = levels[level][sentenceIndex];
-
-if(cleanText(answer) === cleanText(correct)){
-
-  setMessage("✅ Correct!");
-
-  if(sentenceIndex + 1 < levels[level].length){
-
-    setTimeout(()=>{
-      setSentenceIndex(sentenceIndex + 1);
-      setAnswer("");
-      setMessage("");
-      setHighlightIndex(-1);
-    },1000);
-
-  }else{
-    setComplete(true);
-  }
-
-}else{
-  setMessage("❌ Try Again");
-}
-
-}
+if(cleanText(answer)===cleanText(correctWord)){
 
 setMessage("✅ Correct!");
+
+if(wordIndex+1<words.length){
+
+setTimeout(()=>{
+setWordIndex(wordIndex+1);
+setAnswer("");
+setMessage("");
+},800);
+
+}else{
 
 if(sentenceIndex+1<levels[level].length){
 
 setTimeout(()=>{
 setSentenceIndex(sentenceIndex+1);
+setWordIndex(0);
 setAnswer("");
 setMessage("");
-},1000);
+},800);
 
 }else{
 
 setComplete(true);
+
+}
 
 }
 
@@ -181,8 +145,9 @@ setMessage("❌ Try Again");
 
 function startLevel(l){
 
-setLevel(l);
+setLevel(Number(l));
 setSentenceIndex(0);
+setWordIndex(0);
 setAnswer("");
 setMessage("");
 setComplete(false);
@@ -191,15 +156,12 @@ setScreen("reading");
 }
 
 function goHome(){
-
 setScreen("home");
-
 }
 
 if(screen==="home"){
 
 return(
-
 <div style={{textAlign:"center",padding:40}}>
 
 <h1 style={{fontSize:48}}>ReadBoost</h1>
@@ -215,29 +177,20 @@ Rewards
 </button>
 
 </div>
-
 );
-
 }
 
 if(screen==="levels"){
 
 return(
-
 <div style={{textAlign:"center",padding:40}}>
 
 <h2 style={{fontSize:36}}>Choose Level</h2>
 
 {Object.keys(levels).map((l)=>(
-
-<button
-key={l}
-style={buttonStyle}
-onClick={()=>startLevel(l)}
->
+<button key={l} style={buttonStyle} onClick={()=>startLevel(l)}>
 Level {l}
 </button>
-
 ))}
 
 <br/><br/>
@@ -247,29 +200,26 @@ Back
 </button>
 
 </div>
-
 );
-
 }
 
 if(screen==="reading"){
 
 const sentence=levels[level][sentenceIndex];
+const words=sentence.split(" ");
 
 return(
-
 <div style={{textAlign:"center",padding:40}}>
 
 <h2 style={{fontSize:34}}>Level {level}</h2>
 
 <div style={{fontSize:40,marginBottom:30}}>
 
-{sentence.split(" ").map((word,i)=>(
-
+{words.map((word,i)=>(
 <span
 key={i}
 style={{
-backgroundColor:i===highlightIndex?"yellow":"transparent",
+backgroundColor:i===wordIndex?"yellow":"transparent",
 padding:"6px",
 marginRight:"6px",
 borderRadius:"6px"
@@ -277,7 +227,6 @@ borderRadius:"6px"
 >
 {word}
 </span>
-
 ))}
 
 </div>
@@ -295,35 +244,31 @@ borderRadius:"6px"
 <input
 value={answer}
 onChange={(e)=>setAnswer(e.target.value)}
-placeholder="Type the sentence"
+placeholder="Type the word"
 style={{
 fontSize:24,
 padding:10,
-width:"80%",
-maxWidth:500
+width:"60%",
+maxWidth:300,
+textAlign:"center"
 }}
 />
 
 <br/><br/>
 
 <button style={buttonStyle} onClick={checkAnswer}>
-Check Answer
+Check
 </button>
 
 <p style={{fontSize:24}}>{message}</p>
 
-{complete &&(
-
+{complete&&(
 <div>
-
 <h3>🎉 Level Complete!</h3>
-
 <button style={buttonStyle} onClick={()=>setScreen("levels")}>
 Back to Levels
 </button>
-
 </div>
-
 )}
 
 <br/><br/>
@@ -333,9 +278,7 @@ Back
 </button>
 
 </div>
-
 );
-
 }
 
 }
