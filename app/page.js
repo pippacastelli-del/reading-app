@@ -14,17 +14,7 @@ const levels = {
 7:["The birds are flying high","The flowers smell nice","The grass feels soft","The clouds look fluffy","The wind blows gently"],
 8:["We are going to the beach","The waves crash loudly","The sand feels warm","The water looks blue","The sun shines brightly"],
 9:["The teacher reads a story","The children listen carefully","The class learns new words","The students write sentences","Everyone enjoys the lesson"],
-10:["Learning to read takes practice","Books can take you anywhere","Stories can teach lessons","Reading builds imagination","Words help us communicate"],
-11:["The farmer grows fresh vegetables","The cows eat green grass","The chickens lay eggs","The tractor moves slowly","The barn is very big"],
-12:["The train moves down the track","The car drives very fast","The plane flies in the sky","The boat sails on water","The bus stops for passengers"],
-13:["The puppy wags its tail","The kitten plays with yarn","The rabbit hops quickly","The turtle walks slowly","The horse runs freely"],
-14:["The chef cooks tasty meals","The baker makes fresh bread","The waiter serves food","The kitchen smells delicious","The customers feel happy"],
-15:["The artist paints a picture","The singer sings loudly","The dancer moves gracefully","The actor performs on stage","The audience claps happily"],
-16:["The scientist studies plants","The doctor helps sick people","The teacher explains lessons","The builder constructs houses","The pilot flies airplanes"],
-17:["The rain falls from clouds","The thunder sounds loud","The lightning lights the sky","The storm passes quickly","The rainbow appears after rain"],
-18:["The library is quiet and calm","Many books sit on shelves","Readers sit and enjoy stories","Pages turn softly","Learning happens every day"],
-19:["The mountain is very tall","The hikers walk up slowly","The air feels cool","The view looks amazing","The journey feels exciting"],
-20:["Dreams can inspire great ideas","Hard work builds success","Kind words make people smile","Helping others feels good","Learning never stops"]
+10:["Learning to read takes practice","Books can take you anywhere","Stories can teach lessons","Reading builds imagination","Words help us communicate"]
 };
 
 const [screen,setScreen] = useState("home");
@@ -37,25 +27,19 @@ const [message,setMessage] = useState("");
 const [complete,setComplete] = useState(false);
 const [voice,setVoice] = useState(null);
 
-const buttonStyle={
-padding:"15px 30px",
-fontSize:22,
-backgroundColor:"#4CAF50",
-color:"white",
-border:"none",
-borderRadius:10,
-margin:10,
-cursor:"pointer"
-};
+// ⭐ NEW REWARDS
+const [stars,setStars] = useState(0);
+const [coins,setCoins] = useState(0);
 
-// 🎤 Load female voice
+const colors = ["#FF6B6B","#4ECDC4","#FFD93D","#6C5CE7","#00B894","#FDCB6E"];
+
+// 🎤 Voice
 useEffect(()=>{
 function loadVoices(){
 const voices = speechSynthesis.getVoices();
 const female = voices.find(v =>
 v.name.toLowerCase().includes("female") ||
 v.name.toLowerCase().includes("samantha") ||
-v.name.toLowerCase().includes("karen") ||
 v.name.toLowerCase().includes("zira")
 );
 setVoice(female || voices[0]);
@@ -64,21 +48,16 @@ loadVoices();
 speechSynthesis.onvoiceschanged = loadVoices;
 },[]);
 
-// Clean text
 function cleanText(text){
 return text.toLowerCase().trim().replace(/[.,!?]/g,"");
 }
 
-// 🔊 Speak sentence WITH synced highlight
+// 🔊 Sentence
 function speakSentence(){
-
-const sentence = levels[level][sentenceIndex];
-const words = sentence.split(" ");
-
+const words = levels[level][sentenceIndex].split(" ");
 let i = 0;
 
-function speakNext(){
-
+function next(){
 if(i >= words.length){
 setHighlightIndex(-1);
 return;
@@ -86,50 +65,44 @@ return;
 
 setHighlightIndex(i);
 
-const utter = new SpeechSynthesisUtterance(words[i]);
-utter.rate = 0.6;
-utter.pitch = 1.1;
-utter.voice = voice;
+const u = new SpeechSynthesisUtterance(words[i]);
+u.rate = 0.6;
+u.voice = voice;
 
-utter.onend = ()=>{
+u.onend = ()=>{
 i++;
-speakNext();
+next();
 };
 
-speechSynthesis.speak(utter);
+speechSynthesis.speak(u);
 }
 
 speechSynthesis.cancel();
-speakNext();
+next();
 }
 
-// 🔈 Speak single word
+// 🔈 Word
 function speakWord(){
-
-const words = levels[level][sentenceIndex].split(" ");
-const word = words[wordIndex];
-
-const utter = new SpeechSynthesisUtterance(word);
-utter.rate = 0.5;
-utter.pitch = 1.1;
-utter.voice = voice;
-
+const word = levels[level][sentenceIndex].split(" ")[wordIndex];
+const u = new SpeechSynthesisUtterance(word);
+u.rate = 0.5;
+u.voice = voice;
 speechSynthesis.cancel();
-speechSynthesis.speak(utter);
+speechSynthesis.speak(u);
 }
 
-// ✅ Check answer
+// ✅ Check answer + rewards
 function checkAnswer(){
 
-const sentence = levels[level][sentenceIndex];
-const words = sentence.split(" ");
+const words = levels[level][sentenceIndex].split(" ");
 const correct = words[wordIndex];
 
 if(cleanText(answer) === cleanText(correct)){
 
-setMessage("✅ Correct!");
+setStars(prev => prev + 1); // ⭐ per word
+setMessage("⭐ Correct!");
 
-if(wordIndex + 1 < words.length){
+if(wordIndex+1 < words.length){
 
 setTimeout(()=>{
 setWordIndex(wordIndex+1);
@@ -139,7 +112,9 @@ setMessage("");
 
 }else{
 
-if(sentenceIndex + 1 < levels[level].length){
+setCoins(prev => prev + 5); // 🪙 per sentence
+
+if(sentenceIndex+1 < levels[level].length){
 
 setTimeout(()=>{
 setSentenceIndex(sentenceIndex+1);
@@ -149,13 +124,14 @@ setMessage("");
 },600);
 
 }else{
+setCoins(prev => prev + 20); // 🎉 level bonus
 setComplete(true);
 }
 
 }
 
 }else{
-setMessage("❌ Try Again");
+setMessage("❌ Try again");
 }
 
 }
@@ -175,17 +151,42 @@ setScreen("reading");
 // 🏠 HOME
 if(screen==="home"){
 return(
-<div style={{textAlign:"center",padding:40}}>
-<h1 style={{fontSize:48}}>📚 ReadBoost</h1>
+<div style={{textAlign:"center",padding:40,background:"#F0F8FF",minHeight:"100vh"}}>
 
-<button style={buttonStyle} onClick={()=>setScreen("levels")}>
+<h1 style={{fontSize:56}}>📚 ReadBoost</h1>
+
+<div style={{fontSize:22}}>
+⭐ {stars} | 🪙 {coins}
+</div>
+
+<button style={{padding:"20px 40px",fontSize:28,borderRadius:20,margin:20}}
+onClick={()=>setScreen("levels")}>
 Start Reading
 </button>
 
-<br/>
-
-<button style={buttonStyle}>
+<button style={{padding:"15px 30px",fontSize:22,borderRadius:15}}
+onClick={()=>setScreen("rewards")}>
 Rewards
+</button>
+
+</div>
+);
+}
+
+// 🏆 REWARDS SCREEN
+if(screen==="rewards"){
+return(
+<div style={{textAlign:"center",padding:40,background:"#FFF8E7",minHeight:"100vh"}}>
+
+<h2 style={{fontSize:42}}>🏆 Rewards</h2>
+
+<p style={{fontSize:30}}>⭐ Stars: {stars}</p>
+<p style={{fontSize:30}}>🪙 Coins: {coins}</p>
+
+<p style={{fontSize:20}}>Keep going! You're doing amazing!</p>
+
+<button onClick={()=>setScreen("home")} style={{fontSize:22}}>
+⬅ Back
 </button>
 
 </div>
@@ -195,20 +196,40 @@ Rewards
 // 📚 LEVELS
 if(screen==="levels"){
 return(
-<div style={{textAlign:"center",padding:40}}>
-<h2 style={{fontSize:36}}>Choose Level</h2>
+<div style={{padding:30,background:"#F0F8FF",minHeight:"100vh"}}>
 
-{Object.keys(levels).map(l=>(
-<button key={l} style={buttonStyle} onClick={()=>startLevel(l)}>
+<h2 style={{textAlign:"center",fontSize:42}}>Choose Level</h2>
+
+<div style={{
+display:"grid",
+gridTemplateColumns:"repeat(auto-fit, minmax(120px,1fr))",
+gap:20,
+marginTop:30
+}}>
+
+{Object.keys(levels).map((l,i)=>(
+<div
+key={l}
+onClick={()=>startLevel(l)}
+style={{
+background:colors[i%colors.length],
+padding:30,
+borderRadius:20,
+textAlign:"center",
+fontSize:28,
+color:"white",
+cursor:"pointer"
+}}
+>
 Level {l}
-</button>
+</div>
 ))}
 
-<br/><br/>
+</div>
 
-<button style={buttonStyle} onClick={()=>setScreen("home")}>
-Back
-</button>
+<div style={{textAlign:"center",marginTop:40}}>
+<button onClick={()=>setScreen("home")}>⬅ Back</button>
+</div>
 
 </div>
 );
@@ -217,70 +238,47 @@ Back
 // 🎯 READING
 if(screen==="reading"){
 
-const sentence = levels[level][sentenceIndex];
-const words = sentence.split(" ");
+const words = levels[level][sentenceIndex].split(" ");
 
 return(
-<div style={{textAlign:"center",padding:40}}>
+<div style={{textAlign:"center",padding:30,background:"#FFF8E7",minHeight:"100vh"}}>
 
-<h2 style={{fontSize:34}}>Level {level}</h2>
+<h2 style={{fontSize:36}}>Level {level}</h2>
 
-<div style={{fontSize:40,marginBottom:30}}>
-
+<div style={{fontSize:44,marginBottom:30}}>
 {words.map((word,i)=>(
-<span
-key={i}
-style={{
-backgroundColor:
+<span key={i} style={{
+background:
 i===highlightIndex ? "#FFD54F" :
-i===wordIndex ? "yellow" :
+i===wordIndex ? "#FFF176" :
 "transparent",
-padding:"6px",
-marginRight:"6px",
-borderRadius:"6px"
-}}
->
+padding:"8px",
+marginRight:"8px",
+borderRadius:8
+}}>
 {word}
 </span>
 ))}
-
 </div>
 
-<button style={buttonStyle} onClick={speakSentence}>
-🔊 Read Sentence
-</button>
-
-<button style={buttonStyle} onClick={speakWord}>
-🔈 Play Word
-</button>
+<button onClick={speakSentence}>🔊 Sentence</button>
+<button onClick={speakWord}>🔈 Word</button>
 
 <br/><br/>
 
-<input
-value={answer}
-onChange={(e)=>setAnswer(e.target.value)}
-placeholder="Type the word"
-style={{
-fontSize:24,
-padding:10,
-width:"60%",
-maxWidth:300,
-textAlign:"center"
-}}
-/>
+<input value={answer} onChange={(e)=>setAnswer(e.target.value)} />
 
 <br/><br/>
 
-<button style={buttonStyle} onClick={checkAnswer}>
-Check
-</button>
+<button onClick={checkAnswer}>Check</button>
 
 <p style={{fontSize:24}}>{message}</p>
 
 {complete && (
 <div>
 <h3>🎉 Level Complete!</h3>
-<button style={buttonStyle} onClick={()=>setScreen("levels")}>
+<p>+20 coins bonus!</p>
+<button onClick={()=>setScreen("levels")}>
 Back to Levels
 </button>
 </div>
@@ -288,9 +286,7 @@ Back to Levels
 
 <br/><br/>
 
-<button style={buttonStyle} onClick={()=>setScreen("levels")}>
-Back
-</button>
+<button onClick={()=>setScreen("levels")}>⬅ Back</button>
 
 </div>
 );
