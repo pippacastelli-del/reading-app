@@ -27,7 +27,7 @@ const [message,setMessage] = useState("");
 const [complete,setComplete] = useState(false);
 const [voice,setVoice] = useState(null);
 
-// ⭐ NEW REWARDS
+// ⭐ Rewards
 const [stars,setStars] = useState(0);
 const [coins,setCoins] = useState(0);
 
@@ -52,7 +52,7 @@ function cleanText(text){
 return text.toLowerCase().trim().replace(/[.,!?]/g,"");
 }
 
-// 🔊 Sentence
+// 🔊 Sentence with PERFECT sync
 function speakSentence(){
 const words = levels[level][sentenceIndex].split(" ");
 let i = 0;
@@ -67,6 +67,7 @@ setHighlightIndex(i);
 
 const u = new SpeechSynthesisUtterance(words[i]);
 u.rate = 0.6;
+u.pitch = 1.1;
 u.voice = voice;
 
 u.onend = ()=>{
@@ -91,7 +92,7 @@ speechSynthesis.cancel();
 speechSynthesis.speak(u);
 }
 
-// ✅ Check answer + rewards
+// ✅ Check + rewards
 function checkAnswer(){
 
 const words = levels[level][sentenceIndex].split(" ");
@@ -99,7 +100,7 @@ const correct = words[wordIndex];
 
 if(cleanText(answer) === cleanText(correct)){
 
-setStars(prev => prev + 1); // ⭐ per word
+setStars(prev=>prev+1);
 setMessage("⭐ Correct!");
 
 if(wordIndex+1 < words.length){
@@ -112,7 +113,7 @@ setMessage("");
 
 }else{
 
-setCoins(prev => prev + 5); // 🪙 per sentence
+setCoins(prev=>prev+5);
 
 if(sentenceIndex+1 < levels[level].length){
 
@@ -124,8 +125,10 @@ setMessage("");
 },600);
 
 }else{
-setCoins(prev => prev + 20); // 🎉 level bonus
+
+setCoins(prev=>prev+20);
 setComplete(true);
+
 }
 
 }
@@ -151,21 +154,42 @@ setScreen("reading");
 // 🏠 HOME
 if(screen==="home"){
 return(
-<div style={{textAlign:"center",padding:40,background:"#F0F8FF",minHeight:"100vh"}}>
+<div style={{
+textAlign:"center",
+padding:40,
+background:"#F0F8FF",
+minHeight:"100vh"
+}}>
 
 <h1 style={{fontSize:56}}>📚 ReadBoost</h1>
 
-<div style={{fontSize:22}}>
+<p style={{fontSize:22}}>
 ⭐ {stars} | 🪙 {coins}
-</div>
+</p>
 
-<button style={{padding:"20px 40px",fontSize:28,borderRadius:20,margin:20}}
-onClick={()=>setScreen("levels")}>
+<button
+onClick={()=>setScreen("levels")}
+style={{
+padding:"20px 40px",
+fontSize:28,
+background:"#4CAF50",
+color:"white",
+border:"none",
+borderRadius:20,
+margin:20
+}}
+>
 Start Reading
 </button>
 
-<button style={{padding:"15px 30px",fontSize:22,borderRadius:15}}
-onClick={()=>setScreen("rewards")}>
+<button
+onClick={()=>setScreen("rewards")}
+style={{
+padding:"15px 30px",
+fontSize:22,
+borderRadius:15
+}}
+>
 Rewards
 </button>
 
@@ -173,19 +197,22 @@ Rewards
 );
 }
 
-// 🏆 REWARDS SCREEN
+// 🏆 REWARDS
 if(screen==="rewards"){
 return(
-<div style={{textAlign:"center",padding:40,background:"#FFF8E7",minHeight:"100vh"}}>
+<div style={{
+textAlign:"center",
+padding:40,
+background:"#FFF8E7",
+minHeight:"100vh"
+}}>
 
 <h2 style={{fontSize:42}}>🏆 Rewards</h2>
 
 <p style={{fontSize:30}}>⭐ Stars: {stars}</p>
 <p style={{fontSize:30}}>🪙 Coins: {coins}</p>
 
-<p style={{fontSize:20}}>Keep going! You're doing amazing!</p>
-
-<button onClick={()=>setScreen("home")} style={{fontSize:22}}>
+<button onClick={()=>setScreen("home")}>
 ⬅ Back
 </button>
 
@@ -193,18 +220,26 @@ return(
 );
 }
 
-// 📚 LEVELS
+// 📚 LEVELS (FIXED BIG BUTTONS)
 if(screen==="levels"){
 return(
-<div style={{padding:30,background:"#F0F8FF",minHeight:"100vh"}}>
+<div style={{
+padding:30,
+background:"#F0F8FF",
+minHeight:"100vh",
+textAlign:"center"
+}}>
 
-<h2 style={{textAlign:"center",fontSize:42}}>Choose Level</h2>
+<h2 style={{fontSize:44, marginBottom:30}}>
+Choose Level
+</h2>
 
 <div style={{
 display:"grid",
-gridTemplateColumns:"repeat(auto-fit, minmax(120px,1fr))",
-gap:20,
-marginTop:30
+gridTemplateColumns:"repeat(3, 1fr)",
+gap:25,
+maxWidth:500,
+margin:"0 auto"
 }}>
 
 {Object.keys(levels).map((l,i)=>(
@@ -213,13 +248,16 @@ key={l}
 onClick={()=>startLevel(l)}
 style={{
 background:colors[i%colors.length],
-padding:30,
-borderRadius:20,
-textAlign:"center",
-fontSize:28,
+padding:"40px 0",
+borderRadius:25,
+fontSize:30,
+fontWeight:"bold",
 color:"white",
-cursor:"pointer"
+cursor:"pointer",
+boxShadow:"0 8px 0 rgba(0,0,0,0.2)"
 }}
+onMouseDown={(e)=>e.currentTarget.style.transform="translateY(4px)"}
+onMouseUp={(e)=>e.currentTarget.style.transform="translateY(0px)"}
 >
 Level {l}
 </div>
@@ -227,9 +265,21 @@ Level {l}
 
 </div>
 
-<div style={{textAlign:"center",marginTop:40}}>
-<button onClick={()=>setScreen("home")}>⬅ Back</button>
-</div>
+<br/><br/>
+
+<button
+onClick={()=>setScreen("home")}
+style={{
+padding:"15px 30px",
+fontSize:22,
+borderRadius:15,
+background:"#6C5CE7",
+color:"white",
+border:"none"
+}}
+>
+⬅ Back
+</button>
 
 </div>
 );
@@ -241,7 +291,12 @@ if(screen==="reading"){
 const words = levels[level][sentenceIndex].split(" ");
 
 return(
-<div style={{textAlign:"center",padding:30,background:"#FFF8E7",minHeight:"100vh"}}>
+<div style={{
+textAlign:"center",
+padding:30,
+background:"#FFF8E7",
+minHeight:"100vh"
+}}>
 
 <h2 style={{fontSize:36}}>Level {level}</h2>
 
@@ -261,16 +316,33 @@ borderRadius:8
 ))}
 </div>
 
-<button onClick={speakSentence}>🔊 Sentence</button>
-<button onClick={speakWord}>🔈 Word</button>
+<button onClick={speakSentence} style={{margin:10}}>
+🔊 Sentence
+</button>
+
+<button onClick={speakWord} style={{margin:10}}>
+🔈 Word
+</button>
 
 <br/><br/>
 
-<input value={answer} onChange={(e)=>setAnswer(e.target.value)} />
+<input
+value={answer}
+onChange={(e)=>setAnswer(e.target.value)}
+placeholder="Type the word"
+style={{
+fontSize:26,
+padding:12,
+borderRadius:12,
+textAlign:"center"
+}}
+/>
 
 <br/><br/>
 
-<button onClick={checkAnswer}>Check</button>
+<button onClick={checkAnswer}>
+Check
+</button>
 
 <p style={{fontSize:24}}>{message}</p>
 
@@ -286,7 +358,9 @@ Back to Levels
 
 <br/><br/>
 
-<button onClick={()=>setScreen("levels")}>⬅ Back</button>
+<button onClick={()=>setScreen("levels")}>
+⬅ Back
+</button>
 
 </div>
 );
