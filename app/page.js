@@ -169,7 +169,38 @@ setScreen("reading");
 if(screen==="home"){
 return(
 <div style={{textAlign:"center",padding:40}}>
-<h1 style={{fontSize:50}}>📚 ReadBoost</h1>
+<div style={{
+display:"inline-flex",
+alignItems:"center",
+gap:15,
+padding:"15px 30px",
+borderRadius:20,
+background:"linear-gradient(135deg, #42A5F5, #1E88E5)",
+boxShadow:"0 6px 0 rgba(0,0,0,0.2)",
+marginBottom:30
+}}>
+
+<img 
+src="/logo.png" 
+alt="ReadBoost Logo"
+style={{
+width:60,
+height:60,
+objectFit:"contain"
+}}
+/>
+
+<h1 style={{
+fontSize:50,
+color:"white",
+margin:0,
+fontWeight:"900",
+letterSpacing:1
+}}>
+ReadBoost
+</h1>
+
+</div>
 
 <button style={mainButton} onClick={()=>setScreen("levels")}>
 Start Reading
