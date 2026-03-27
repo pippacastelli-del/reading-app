@@ -176,7 +176,7 @@ flexDirection:"column",
 alignItems:"center"
 }}>
 
-{/* 🔥 BIG HEADER CARD */}
+{/* HEADER */}
 <div style={{
 background:"linear-gradient(135deg,#42a5f5,#1e88e5)",
 padding:"25px 40px",
@@ -209,7 +209,7 @@ ReadBoost
 
 </div>
 
-{/* 🎮 BIG BUTTONS STACKED */}
+{/* BUTTONS */}
 <button style={{
 padding:"20px 50px",
 fontSize:26,
@@ -243,6 +243,10 @@ onClick={()=>setScreen("rewards")}
 >
 ⭐ Rewards ({stars})
 </button>
+
+</div>
+);
+}
 
 </div>
 );
