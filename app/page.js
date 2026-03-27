@@ -258,15 +258,7 @@ Next reward in {10 - (stars % 10 || 10)} ⭐
 <br/>
 
 <button style={mainButton} onClick={()=>setScreen("home")}>
-⬅ Back
-</button>
-
-</div>
-);
-}
-
-<button style={mainButton} onClick={()=>setScreen("home")}>
-⬅ Back
+Back
 </button>
 
 </div>
@@ -346,8 +338,8 @@ Back to Levels
 
 <br/><br/>
 
-<button style={mainButton} onClick={()=>setScreen("levels")}>
-⬅ Back
+<button style={mainButton} onClick={()=>setScreen("home")}>
+Back
 </button>
 
 </div>
