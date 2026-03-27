@@ -204,7 +204,32 @@ Level {l}
 </div>
 );
 }
+// ⭐ REWARDS SCREEN
+if(screen==="rewards"){
+return(
+<div style={{textAlign:"center",padding:40}}>
 
+<h1 style={{fontSize:48}}>🏆 Rewards</h1>
+
+<h2 style={{fontSize:32}}>
+You have {stars} ⭐ stars!
+</h2>
+
+<p style={{fontSize:24}}>
+Great job! Keep reading to earn more rewards 🎉
+</p>
+
+<div style={{fontSize:60, margin:20}}>
+{"⭐".repeat(Math.min(stars,20))}
+</div>
+
+<button style={mainButton} onClick={()=>setScreen("home")}>
+⬅ Back
+</button>
+
+</div>
+);
+}
 // 🎯 READING
 if(screen==="reading"){
 
