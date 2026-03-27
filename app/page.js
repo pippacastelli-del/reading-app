@@ -28,83 +28,45 @@ const [complete,setComplete] = useState(false);
 const [voice,setVoice] = useState(null);
 const [stars,setStars] = useState(0);
 
-// 🎨 BIG iPad button style
-const bigButton = {
-padding:"20px 40px",
-fontSize:24,
-borderRadius:20,
-border:"none",
-margin:15,
-cursor:"pointer",
-fontWeight:"bold",
-boxShadow:"0 6px 0 rgba(0,0,0,0.2)",
-transition:"0.1s",
-};
-
-const playSentenceStyle = {
-...bigButton,
-backgroundColor:"#4CAF50",
-color:"white"
-};
-
-const playWordStyle = {
-...bigButton,
-backgroundColor:"#FF9800",
-color:"white"
-};
-
-const mainButton = {
-...bigButton,
-backgroundColor:"#2196F3",
-color:"white"
-};
-
 // 🔊 Voice
 useEffect(()=>{
-function loadVoices(){
+const loadVoices = ()=>{
 const voices = speechSynthesis.getVoices();
-const female = voices.find(v =>
-v.name.toLowerCase().includes("female") ||
-v.name.toLowerCase().includes("samantha") ||
-v.name.toLowerCase().includes("zira")
-);
-setVoice(female || voices[0]);
-}
+setVoice(voices.find(v=>v.name.includes("Female")) || voices[0]);
+};
 loadVoices();
 speechSynthesis.onvoiceschanged = loadVoices;
 },[]);
 
-function cleanText(text){
-return text.toLowerCase().trim().replace(/[.,!?]/g,"");
+function cleanText(t){
+return t.toLowerCase().trim().replace(/[.,!?]/g,"");
 }
 
-// 🔊 Sentence + highlight
+// 🔊 Speak sentence word-by-word (perfect sync)
 function speakSentence(){
-const sentence = levels[level][sentenceIndex];
-const words = sentence.split(" ");
-
+const words = levels[level][sentenceIndex].split(" ");
 speechSynthesis.cancel();
 
 let i = 0;
 
 function speakNext(){
-if(i >= words.length){
+if(i>=words.length){
 setHighlightIndex(-1);
 return;
 }
 
 setHighlightIndex(i);
 
-const utter = new SpeechSynthesisUtterance(words[i]);
-utter.rate = 0.6;
-utter.voice = voice;
+const u = new SpeechSynthesisUtterance(words[i]);
+u.rate = 0.6;
+u.voice = voice;
 
-utter.onend = () => {
+u.onend = ()=>{
 i++;
 speakNext();
 };
 
-speechSynthesis.speak(utter);
+speechSynthesis.speak(u);
 }
 
 speakNext();
@@ -113,12 +75,11 @@ speakNext();
 // 🔈 Word
 function speakWord(){
 const word = levels[level][sentenceIndex].split(" ")[wordIndex];
-const utter = new SpeechSynthesisUtterance(word);
-utter.rate = 0.5;
-utter.voice = voice;
-
+const u = new SpeechSynthesisUtterance(word);
+u.rate = 0.5;
+u.voice = voice;
 speechSynthesis.cancel();
-speechSynthesis.speak(utter);
+speechSynthesis.speak(u);
 }
 
 // ✅ Check
@@ -126,8 +87,7 @@ function checkAnswer(){
 const words = levels[level][sentenceIndex].split(" ");
 const correct = words[wordIndex];
 
-if(cleanText(answer) === cleanText(correct)){
-
+if(cleanText(answer)===cleanText(correct)){
 setMessage("✅ Correct!");
 setStars(s=>s+1);
 
@@ -149,7 +109,6 @@ setMessage("");
 setComplete(true);
 }
 }
-
 }else{
 setMessage("❌ Try Again");
 }
@@ -168,119 +127,54 @@ setScreen("reading");
 // 🏠 HOME
 if(screen==="home"){
 return(
-<div style={{
-textAlign:"center",
-padding:40,
-display:"flex",
-flexDirection:"column",
-alignItems:"center"
-}}>
+<div style={{textAlign:"center",padding:40}}>
 
-{/* HEADER */}
 <div style={{
 background:"linear-gradient(135deg,#42a5f5,#1e88e5)",
 padding:"25px 40px",
 borderRadius:25,
-display:"flex",
+display:"inline-flex",
 alignItems:"center",
 gap:20,
 boxShadow:"0 8px 0 rgba(0,0,0,0.2)",
 marginBottom:40
 }}>
 
-<img 
-src="/logo.png" 
-alt="ReadBoost Logo"
-style={{
-width:70,
-height:70,
-objectFit:"contain"
-}}
-/>
+<img src="/logo.png" style={{width:70,height:70}}/>
 
-<h1 style={{
-fontSize:60,
-color:"white",
-margin:0,
-fontWeight:"bold"
-}}>
+<h1 style={{fontSize:60,color:"white",margin:0}}>
 ReadBoost
 </h1>
 
 </div>
 
-{/* BUTTONS */}
+<br/>
+
 <button style={{
 padding:"20px 50px",
 fontSize:26,
 borderRadius:20,
-border:"none",
-margin:15,
-cursor:"pointer",
-fontWeight:"bold",
-backgroundColor:"#4CAF50",
+background:"#4CAF50",
 color:"white",
-boxShadow:"0 6px 0 rgba(0,0,0,0.2)"
+margin:15
 }}
 onClick={()=>setScreen("levels")}
 >
 Start Reading
 </button>
 
+<br/>
+
 <button style={{
 padding:"20px 50px",
 fontSize:26,
 borderRadius:20,
-border:"none",
-margin:15,
-cursor:"pointer",
-fontWeight:"bold",
-backgroundColor:"#FF9800",
+background:"#FF9800",
 color:"white",
-boxShadow:"0 6px 0 rgba(0,0,0,0.2)"
+margin:15
 }}
 onClick={()=>setScreen("rewards")}
 >
-⭐ Rewards ({stars})
-</button>
-
-</div>
-);
-}
-
-</div>
-);
-}
-
-<img 
-src="/logo.png" 
-alt="ReadBoost Logo"
-style={{
-width:60,
-height:60,
-objectFit:"contain"
-}}
-/>
-
-<h1 style={{
-fontSize:50,
-color:"white",
-margin:0,
-fontWeight:"900",
-letterSpacing:1
-}}>
-ReadBoost
-</h1>
-
-</div>
-
-<button style={mainButton} onClick={()=>setScreen("levels")}>
-Start Reading
-</button>
-
-<br/>
-
-<button style={mainButton} onClick={()=>setScreen("rewards")}>
 ⭐ Rewards ({stars})
 </button>
 
@@ -292,94 +186,47 @@ Start Reading
 if(screen==="levels"){
 return(
 <div style={{textAlign:"center",padding:40}}>
-<h2 style={{fontSize:40}}>Choose Level</h2>
+<h2>Choose Level</h2>
 
 {Object.keys(levels).map(l=>(
-<button key={l} style={mainButton} onClick={()=>startLevel(l)}>
+<button key={l}
+style={{padding:20,fontSize:22,margin:10}}
+onClick={()=>startLevel(l)}>
 Level {l}
 </button>
 ))}
 
-<br/><br/>
-<button style={mainButton} onClick={()=>setScreen("home")}>
-⬅ Back
-</button>
-</div>
-);
-}
-// ⭐ REWARDS SCREEN (UPGRADED)
-if(screen==="rewards"){
-
-const rewardsUnlocked = Math.floor(stars / 10);
-
-return(
-<div style={{
-textAlign:"center",
-padding:40,
-background:"linear-gradient(#a1c4fd, #c2e9fb)",
-minHeight:"100vh"
-}}>
-
-<h1 style={{
-fontSize:52,
-marginBottom:10
-}}>
-🏆 Rewards
-</h1>
-
-<h2 style={{
-fontSize:36,
-marginBottom:20
-}}>
-You have {stars} ⭐
-</h2>
-
-{/* ⭐ BIG STAR DISPLAY */}
-<div style={{
-fontSize:80,
-margin:20
-}}>
-{"⭐".repeat(Math.min(stars,10))}
-</div>
-
-{/* 🎁 REWARD UNLOCKS */}
-<h3 style={{fontSize:28}}>
-🎁 Rewards Unlocked: {rewardsUnlocked}
-</h3>
-
-{rewardsUnlocked > 0 && (
-<p style={{fontSize:24}}>
-Amazing! You've unlocked {rewardsUnlocked} reward{rewardsUnlocked>1?"s":""} 🎉
-</p>
-)}
-
-{/* 🎉 NEXT GOAL */}
-<p style={{fontSize:22, marginTop:20}}>
-Next reward in {10 - (stars % 10 || 10)} ⭐
-</p>
-
 <br/>
-
-<button style={mainButton} onClick={()=>setScreen("home")}>
-Back
-</button>
-
+<button onClick={()=>setScreen("home")}>⬅ Back</button>
 </div>
 );
 }
+
+// ⭐ REWARDS
+if(screen==="rewards"){
+return(
+<div style={{textAlign:"center",padding:40}}>
+<h1>🏆 Rewards</h1>
+<h2>{stars} ⭐</h2>
+<div style={{fontSize:50}}>
+{"⭐".repeat(Math.min(stars,20))}
+</div>
+<button onClick={()=>setScreen("home")}>⬅ Back</button>
+</div>
+);
+}
+
 // 🎯 READING
 if(screen==="reading"){
 
-const sentence = levels[level][sentenceIndex];
-const words = sentence.split(" ");
+const words = levels[level][sentenceIndex].split(" ");
 
 return(
 <div style={{textAlign:"center",padding:40}}>
 
-<h2 style={{fontSize:36}}>Level {level}</h2>
+<h2>Level {level}</h2>
 
-<div style={{fontSize:42,marginBottom:30}}>
-
+<div style={{fontSize:40}}>
 {words.map((w,i)=>(
 <span key={i}
 style={{
@@ -387,63 +234,33 @@ backgroundColor:
 i===highlightIndex ? "#FFD54F" :
 i===wordIndex ? "yellow" :
 "transparent",
-padding:"6px",
-marginRight:"6px",
-borderRadius:"6px"
+padding:5,
+marginRight:5
 }}>
 {w}
 </span>
 ))}
-
 </div>
 
-{/* 🔥 BIG BUTTONS BACK */}
-<button style={playSentenceStyle} onClick={speakSentence}>
-🔊 Play Sentence
-</button>
+<br/>
 
-<button style={playWordStyle} onClick={speakWord}>
-🔈 Play Word
-</button>
+<button onClick={speakSentence}>🔊 Sentence</button>
+<button onClick={speakWord}>🔈 Word</button>
 
 <br/><br/>
 
-<input
-value={answer}
-onChange={(e)=>setAnswer(e.target.value)}
-placeholder="Type the word"
-style={{
-fontSize:28,
-padding:15,
-width:"70%",
-maxWidth:400,
-borderRadius:15,
-textAlign:"center"
-}}
-/>
+<input value={answer} onChange={e=>setAnswer(e.target.value)} />
 
-<br/><br/>
+<br/>
 
-<button style={mainButton} onClick={checkAnswer}>
-Check
-</button>
+<button onClick={checkAnswer}>Check</button>
 
-<p style={{fontSize:26}}>{message}</p>
+<p>{message}</p>
 
-{complete && (
-<div>
-<h3>🎉 Level Complete!</h3>
-<button style={mainButton} onClick={()=>setScreen("levels")}>
-Back to Levels
-</button>
-</div>
-)}
+{complete && <h3>🎉 Level Complete!</h3>}
 
-<br/><br/>
-
-<button style={mainButton} onClick={()=>setScreen("home")}>
-Back
-</button>
+<br/>
+<button onClick={()=>setScreen("levels")}>⬅ Back</button>
 
 </div>
 );
