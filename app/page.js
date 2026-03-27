@@ -185,62 +185,80 @@ onClick={()=>setScreen("rewards")}
 // 📚 LEVELS
 if(screen==="levels"){
 return(
-<div style={{textAlign:"center",padding:40}}>
-<h2>Choose Level</h2>
+<div style={{
+textAlign:"center",
+padding:40
+}}>
 
-{Object.keys(levels).map(l=>(
-<button key={l}
-style={{padding:20,fontSize:22,margin:10}}
-onClick={()=>startLevel(l)}>
+<h2 style={{fontSize:42, marginBottom:30}}>
+🎯 Choose Level
+</h2>
+
+{/* 🔥 GRID OF BIG BUTTONS */}
+<div style={{
+display:"flex",
+flexWrap:"wrap",
+justifyContent:"center",
+gap:20,
+maxWidth:800,
+margin:"0 auto"
+}}>
+
+{Object.keys(levels).map((l,i)=>{
+
+// 🎨 Different colors for fun
+const colors = [
+"#FF5252","#FF9800","#FFEB3B","#4CAF50",
+"#00BCD4","#2196F3","#3F51B5","#9C27B0",
+"#E91E63","#8BC34A"
+];
+
+return(
+<button
+key={l}
+onClick={()=>startLevel(l)}
+style={{
+padding:"25px 35px",
+fontSize:24,
+borderRadius:20,
+border:"none",
+cursor:"pointer",
+fontWeight:"bold",
+color:"white",
+backgroundColor:colors[i % colors.length],
+boxShadow:"0 6px 0 rgba(0,0,0,0.2)",
+minWidth:140
+}}
+>
 Level {l}
 </button>
-))}
-
-<br/>
-<button onClick={()=>setScreen("home")}>⬅ Back</button>
-</div>
 );
-}
 
-// ⭐ REWARDS
-if(screen==="rewards"){
-return(
-<div style={{textAlign:"center",padding:40}}>
-<h1>🏆 Rewards</h1>
-<h2>{stars} ⭐</h2>
-<div style={{fontSize:50}}>
-{"⭐".repeat(Math.min(stars,20))}
+})}
+
 </div>
-<button onClick={()=>setScreen("home")}>⬅ Back</button>
-</div>
-);
-}
 
-// 🎯 READING
-if(screen==="reading"){
+<br/><br/>
 
-const words = levels[level][sentenceIndex].split(" ");
-
-return(
-<div style={{textAlign:"center",padding:40}}>
-
-<h2>Level {level}</h2>
-
-<div style={{fontSize:40}}>
-{words.map((w,i)=>(
-<span key={i}
+<button
 style={{
-backgroundColor:
-i===highlightIndex ? "#FFD54F" :
-i===wordIndex ? "yellow" :
-"transparent",
-padding:5,
-marginRight:5
-}}>
-{w}
-</span>
-))}
+padding:"18px 40px",
+fontSize:22,
+borderRadius:15,
+border:"none",
+backgroundColor:"#607D8B",
+color:"white",
+cursor:"pointer",
+boxShadow:"0 5px 0 rgba(0,0,0,0.2)"
+}}
+onClick={()=>setScreen("home")}
+>
+⬅ Back
+</button>
+
 </div>
+);
+}
 
 <br/>
 
