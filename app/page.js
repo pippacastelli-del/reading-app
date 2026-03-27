@@ -204,24 +204,66 @@ Level {l}
 </div>
 );
 }
-// ⭐ REWARDS SCREEN
+// ⭐ REWARDS SCREEN (UPGRADED)
 if(screen==="rewards"){
+
+const rewardsUnlocked = Math.floor(stars / 10);
+
 return(
-<div style={{textAlign:"center",padding:40}}>
+<div style={{
+textAlign:"center",
+padding:40,
+background:"linear-gradient(#a1c4fd, #c2e9fb)",
+minHeight:"100vh"
+}}>
 
-<h1 style={{fontSize:48}}>🏆 Rewards</h1>
+<h1 style={{
+fontSize:52,
+marginBottom:10
+}}>
+🏆 Rewards
+</h1>
 
-<h2 style={{fontSize:32}}>
-You have {stars} ⭐ stars!
+<h2 style={{
+fontSize:36,
+marginBottom:20
+}}>
+You have {stars} ⭐
 </h2>
 
+{/* ⭐ BIG STAR DISPLAY */}
+<div style={{
+fontSize:80,
+margin:20
+}}>
+{"⭐".repeat(Math.min(stars,10))}
+</div>
+
+{/* 🎁 REWARD UNLOCKS */}
+<h3 style={{fontSize:28}}>
+🎁 Rewards Unlocked: {rewardsUnlocked}
+</h3>
+
+{rewardsUnlocked > 0 && (
 <p style={{fontSize:24}}>
-Great job! Keep reading to earn more rewards 🎉
+Amazing! You've unlocked {rewardsUnlocked} reward{rewardsUnlocked>1?"s":""} 🎉
+</p>
+)}
+
+{/* 🎉 NEXT GOAL */}
+<p style={{fontSize:22, marginTop:20}}>
+Next reward in {10 - (stars % 10 || 10)} ⭐
 </p>
 
-<div style={{fontSize:60, margin:20}}>
-{"⭐".repeat(Math.min(stars,20))}
+<br/>
+
+<button style={mainButton} onClick={()=>setScreen("home")}>
+⬅ Back
+</button>
+
 </div>
+);
+}
 
 <button style={mainButton} onClick={()=>setScreen("home")}>
 ⬅ Back
