@@ -249,7 +249,7 @@ fontWeight:"bold",
 backgroundColor:"#FF9800",
 color:"white",
 boxShadow:"0 6px 0 rgba(0,0,0,0.2)"
-}}
+
 <button style={mainButton} onClick={()=>setScreen("rewards")}>
 ⭐ Rewards ({stars})
 </button>
