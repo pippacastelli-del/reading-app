@@ -177,7 +177,7 @@ Start Reading
 
 <br/>
 
-<button style={mainButton}>
+<button style={mainButton} onClick={()=>setScreen("rewards")}>
 ⭐ Rewards ({stars})
 </button>
 
