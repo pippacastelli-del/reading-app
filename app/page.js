@@ -179,16 +179,79 @@ setScreen("reading");
 // 🏠 HOME
 if(screen==="home"){
 return(
-<div style={{textAlign:"center",padding:40}}>
-<h1 style={{fontSize:50}}>📚 ReadBoost</h1>
+<div style={{
+textAlign:"center",
+padding:40,
+display:"flex",
+flexDirection:"column",
+alignItems:"center"
+}}>
 
-<button style={mainButton} onClick={()=>setScreen("levels")}>
+{/* 🔥 BIG HEADER CARD */}
+<div style={{
+background:"linear-gradient(135deg,#42a5f5,#1e88e5)",
+padding:"25px 40px",
+borderRadius:25,
+display:"flex",
+alignItems:"center",
+gap:20,
+boxShadow:"0 8px 0 rgba(0,0,0,0.2)",
+marginBottom:40
+}}>
+
+<img 
+src="/logo.png" 
+alt="ReadBoost Logo"
+style={{
+width:70,
+height:70,
+objectFit:"contain"
+}}
+/>
+
+<h1 style={{
+fontSize:60,
+color:"white",
+margin:0,
+fontWeight:"bold"
+}}>
+ReadBoost
+</h1>
+
+</div>
+
+{/* 🎮 BIG BUTTONS STACKED */}
+<button style={{
+padding:"20px 50px",
+fontSize:26,
+borderRadius:20,
+border:"none",
+margin:15,
+cursor:"pointer",
+fontWeight:"bold",
+backgroundColor:"#4CAF50",
+color:"white",
+boxShadow:"0 6px 0 rgba(0,0,0,0.2)"
+}}
+onClick={()=>setScreen("levels")}
+>
 Start Reading
 </button>
 
-<br/>
-
-<button style={mainButton}>
+<button style={{
+padding:"20px 50px",
+fontSize:26,
+borderRadius:20,
+border:"none",
+margin:15,
+cursor:"pointer",
+fontWeight:"bold",
+backgroundColor:"#FF9800",
+color:"white",
+boxShadow:"0 6px 0 rgba(0,0,0,0.2)"
+}}
+onClick={()=>setScreen("rewards")}
+>
 ⭐ Rewards ({stars})
 </button>
 
